@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YK Admin - FF Tournament</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap');
+        body { background-color: #0b0e14; color: #e2e8f0; font-family: 'Roboto', sans-serif; }
+        .gaming-font { font-family: 'Orbitron', sans-serif; }
+        .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .orange-btn { background: linear-gradient(90deg, #f97316 0%, #ea580c 100%); transition: 0.3s; }
+        .orange-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(234, 88, 12, 0.4); }
+        input, select { background: #1e293b !important; border: 1px solid #334155 !important; color: white !important; }
+    </style>
+</head>
+<body class="min-h-screen pb-20">
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, updateDoc, doc, deleteDoc, where, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // Your Correct Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyDUHOA9iEYJGpkuRWgjCg8L00sQpW-36sk",
+            authDomain: "yk-tournament-719d3.firebaseapp.com",
+            projectId: "yk-tournament-719d3",
+            storageBucket: "yk-tournament-719d3.firebasestorage.app",
+            messagingSenderId: "489185516491",
+            appId: "1:489185516491:web:a12f64894cb05e1467344e",
+            measurementId: "G-N3HSR1VPF8"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // --- AUTH LOGIC ---
+        window.handleLogin = async (e) => {
+            e.preventDefault();
+            const email = e.target.email.value;
+            const password = e.target.password.value;
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                alert("Login Error: ইমেইল বা পাসওয়ার্ড ভুল!");
+            }
+        };
+
+        window.logout = () => signOut(auth);
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('admin-content').classList.remove('hidden');
+                loadData();
+            } else {
+                document.getElementById('login-screen').classList.remove('hidden');
+                document.getElementById('admin-content').classList.add('hidden');
+            }
+        });
+
+        // --- TAB SYSTEM ---
+        window.switchTab = (id) => {
+            document.querySelectorAll('.tab-page').forEach(p => p.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+        };
+
+        // --- DATABASE LOGIC ---
+        window.createMatch = async (e) => {
+            e.preventDefault();
+            const data = {
+                title: e.target.title.value,
+                fee: e.target.fee.value,
+                prize: e.target.prize.value,
+                time: e.target.time.value,
+                map: e.target.map.value,
+                type: e.target.type.value,
+                status: 'open',
+                roomID: '',
+                roomPass: '',
+                createdAt: new Date().getTime()
+            };
+            try {
+                await addDoc(collection(db, "matches"), data);
+                alert("Match Published!");
+                e.target.reset();
+                switchTab('manage-matches');
+            } catch (err) { alert(err.message); }
+        };
+
+        function loadData() {
+            // Stats Count
+            onSnapshot(collection(db, "matches"), s => {
+                document.getElementById('count-matches').innerText = s.size;
+            });
+
+            // Load Matches List
+            onSnapshot(query(collection(db, "matches"), orderBy("createdAt", "desc")), (snap) => {
+                const list = document.getElementById('match-list');
+                list.innerHTML = '';
+                snap.forEach(d => {
+                    const m = d.data();
+                    list.innerHTML += `
+                        <div class="glass-card p-4 rounded-xl mb-3 border-l-4 border-orange-500">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-orange-400">${m.title}</h3>
+                                    <p class="text-[10px] text-gray-400">${m.time} | Fee: ৳${m.fee}</p>
+                                </div>
+                                <button onclick="deleteMatch('${d.id}')" class="text-red-500 text-sm"><i class="fas fa-trash"></i></button>
+                            </div>
+                            <div class="flex gap-2 mt-3">
+                                <button onclick="setRoom('${d.id}')" class="flex-1 bg-blue-600 text-[10px] py-1 rounded">Update ID/PASS</button>
+                                <span class="bg-slate-700 px-2 py-1 rounded text-[10px]">${m.status.toUpperCase()}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+
+            // Load Join Requests
+            onSnapshot(query(collection(db, "registrations"), where("status", "==", "pending")), (snap) => {
+                const reqList = document.getElementById('request-list');
+                reqList.innerHTML = '';
+                snap.forEach(d => {
+                    const r = d.data();
+                    reqList.innerHTML += `
+                        <div class="glass-card p-4 rounded-xl mb-3">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="font-bold text-white text-sm">${r.playerName}</p>
+                                    <p class="text-[10px] text-orange-400">TrxID: ${r.trxID}</p>
+                                    <p class="text-[10px] text-gray-400">Match: ${r.matchTitle}</p>
+                                </div>
+                                <div class="flex gap-1">
+                                    <button onclick="approve('${d.id}')" class="bg-green-600 p-2 rounded text-xs"><i class="fas fa-check"></i></button>
+                                    <button onclick="reject('${d.id}')" class="bg-red-600 p-2 rounded text-xs"><i class="fas fa-times"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        window.setRoom = async (id) => {
+            const rid = prompt("Enter Room ID:");
+            const rpass = prompt("Enter Room Password:");
+            if(rid && rpass) {
+                await updateDoc(doc(db, "matches", id), { roomID: rid, roomPass: rpass, status: 'live' });
+                alert("Room Details Sent!");
+            }
+        };
+
+        window.deleteMatch = async (id) => { if(confirm("Delete?")) await deleteDoc(doc(db, "matches", id)); };
+        window.approve = async (id) => { await updateDoc(doc(db, "registrations", id), { status: 'approved' }); };
+        window.reject = async (id) => { if(confirm("Reject?")) await deleteDoc(doc(db, "registrations", id)); };
+
+    </script>
+
+    <!-- UI: Login -->
+    <div id="login-screen" class="flex items-center justify-center min-h-screen p-6">
+        <div class="glass-card p-8 rounded-2xl w-full max-w-sm">
+            <h1 class="text-2xl font-bold text-center gaming-font text-orange-500 mb-6 tracking-widest">YK ADMIN</h1>
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <input type="email" name="email" placeholder="Email" class="w-full p-3 rounded-lg focus:outline-none" required>
+                <input type="password" name="password" placeholder="Password" class="w-full p-3 rounded-lg focus:outline-none" required>
+                <button type="submit" class="w-full orange-btn py-3 rounded-lg font-bold gaming-font">LOG IN</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- UI: Dashboard Content -->
+    <div id="admin-content" class="hidden">
+        <header class="p-4 glass-card sticky top-0 z-50 flex justify-between items-center">
+            <h2 class="gaming-font text-orange-500 text-lg">YK DASHBOARD</h2>
+            <button onclick="logout()" class="text-xs text-gray-400 italic">Logout</button>
+        </header>
+
+        <main class="p-4">
+            <!-- Page: Home/Stats -->
+            <div id="home" class="tab-page">
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="glass-card p-4 rounded-xl text-center">
+                        <p class="text-[10px] text-gray-400 uppercase">Matches</p>
+                        <h4 id="count-matches" class="text-2xl font-bold text-orange-500">0</h4>
+                    </div>
+                    <div class="glass-card p-4 rounded-xl text-center">
+                        <p class="text-[10px] text-gray-400 uppercase">System</p>
+                        <h4 class="text-2xl font-bold text-green-500 italic">Live</h4>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <button onclick="switchTab('create-match')" class="w-full glass-card p-4 rounded-xl flex justify-between items-center">
+                        <span><i class="fas fa-plus-circle mr-2 text-orange-500"></i> Create Match</span>
+                        <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                    <button onclick="switchTab('verify-players')" class="w-full glass-card p-4 rounded-xl flex justify-between items-center">
+                        <span><i class="fas fa-user-check mr-2 text-blue-500"></i> Player Requests</span>
+                        <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Page: Create Match -->
+            <div id="create-match" class="tab-page hidden">
+                <h3 class="font-bold mb-4 gaming-font text-orange-400">Setup Match</h3>
+                <form onsubmit="createMatch(event)" class="space-y-3">
+                    <input type="text" name="title" placeholder="Title (e.g. Solo Match)" class="w-full p-3 rounded-lg" required>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="number" name="fee" placeholder="Entry Fee ৳" class="w-full p-3 rounded-lg" required>
+                        <input type="number" name="prize" placeholder="Prize Pool ৳" class="w-full p-3 rounded-lg" required>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <select name="map" class="w-full p-3 rounded-lg">
+                            <option value="Bermuda">Bermuda</option>
+                            <option value="Purgatory">Purgatory</option>
+                        </select>
+                        <select name="type" class="w-full p-3 rounded-lg">
+                            <option value="Solo">Solo</option>
+                            <option value="Duo">Duo</option>
+                            <option value="Squad">Squad</option>
+                        </select>
+                    </div>
+                    <input type="text" name="time" placeholder="Time (e.g. 09:00 PM)" class="w-full p-3 rounded-lg" required>
+                    <button type="submit" class="w-full orange-btn py-3 rounded-lg font-bold">PUBLISH MATCH</button>
+                </form>
+            </div>
+
+            <!-- Page: Manage Matches -->
+            <div id="manage-matches" class="tab-page hidden">
+                <h3 class="font-bold mb-4 gaming-font text-orange-400">Live Matches</h3>
+                <div id="match-list"></div>
+            </div>
+
+            <!-- Page: Verify Players -->
+            <div id="verify-players" class="tab-page hidden">
+                <h3 class="font-bold mb-4 gaming-font text-blue-400">Join Requests</h3>
+                <div id="request-list"></div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="fixed bottom-0 left-0 right-0 glass-card flex justify-around p-3 border-t border-slate-700">
+            <button onclick="switchTab('home')" class="flex flex-col items-center text-orange-500">
+                <i class="fas fa-home"></i><span class="text-[10px]">Home</span>
+            </button>
+            <button onclick="switchTab('manage-matches')" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-trophy"></i><span class="text-[10px]">Matches</span>
+            </button>
+            <button onclick="switchTab('verify-players')" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-user-shield"></i><span class="text-[10px]">Verify</span>
+            </button>
+        </nav>
+    </div>
+
+</body>
+</html>
