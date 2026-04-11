@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>BattleArena - Ultimate Esports</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- SWIPER CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <style>
+        :root {
+            --bg-primary: #0C0C27; --bg-secondary: #1C1C3A; --text-primary: #FFFFFF;
+            --text-secondary: #A0A0B8; --accent-primary: #FACC15; --accent-secondary: #00E0FF;
+            --accent-red: #F94879; --border-color: #2a2a4a;
+        }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-primary); color: var(--text-primary); padding-top: 70px; padding-bottom: 80px; overflow-x: hidden; }
+        .main-content { padding: 1rem; }
+        .section { display: none; min-height: 80vh; } 
+        .section.active { display: block; animation: fadeIn 0.3s ease; } 
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Header Style */
+        .app-header { position: fixed; top: 0; left: 0; width: 100%; height: 70px; background-color: var(--bg-primary); display: flex; justify-content: space-between; align-items: center; padding: 0 1rem; z-index: 1000; border-bottom: 1px solid var(--border-color); }
+        .app-header .header-left { display: flex; align-items: center; gap: 1rem; }
+        .app-header .header-back-button { background: none; border: none; color: white; font-size: 1.5rem; display: none; }
+        .app-header .header-page-title { font-size: 1.2rem; font-weight: 600; display: none; color: var(--accent-secondary); }
+        
+        .user-info { display: flex; align-items: center; gap: 0.75rem; }
+        .user-avatar { width: 45px; height: 45px; border-radius: 50%; background-color: var(--accent-secondary); border: 2px solid #3cffce; display: flex; justify-content: center; align-items: center; font-weight: 700; font-size: 1.1rem; color: var(--bg-primary); text-transform: uppercase; }
+        .welcome-text h2 { font-size: 1rem; font-weight: 600; margin: 0; }
+        .welcome-text p { font-size: 0.8rem; color: var(--text-secondary); margin: 0; }
+
+        .wallet-button { display: flex; align-items: center; gap: 0.5rem; background-color: var(--accent-red); padding: 0.5rem 0.9rem; border-radius: 50px; font-weight: 600; font-size: 0.9rem; border: none; color: white; text-decoration: none; transition: 0.3s; }
+        .wallet-button:active { transform: scale(0.95); }
+        .wallet-button .plus-icon { background-color: #fff; color: var(--accent-red); border-radius: 50%; width: 18px; height: 18px; display: inline-flex; justify-content: center; align-items: center; font-weight: bold; font-size: 0.7rem; }
+
+        /* Slider & Cards */
+        .swiper { width: 100%; border-radius: 16px; margin-bottom: 1.5rem; aspect-ratio: 16 / 8; overflow: hidden; }
+        .swiper-slide img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .section-header { margin-bottom: 1rem; border-left: 4px solid var(--accent-red); padding-left: 10px; }
+        .section-header h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 2px; }
+        .section-header p { font-size: 0.8rem; color: var(--text-secondary); margin: 0; }
+
+        .contest-categories { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; margin-bottom: 1.5rem; }
+        .category-card { background-color: var(--bg-secondary); border-radius: 12px; padding: 1rem 0.4rem; text-align: center; border: 1px solid var(--border-color); cursor: pointer; transition: 0.2s; }
+        .category-card:active { background: var(--border-color); }
+        .category-card .icon { font-size: 1.4rem; color: var(--accent-primary); margin-bottom: 0.4rem; }
+        .category-card span { font-size: 0.75rem; font-weight: 600; display: block; }
+
+        .game-list { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+        .game-list::-webkit-scrollbar { display: none; }
+        .game-card { flex: 0 0 130px; height: 130px; border-radius: 14px; overflow: hidden; border: 2px solid #333355; position: relative; }
+        .game-card img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Bottom Nav */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--bg-secondary); display: flex; justify-content: space-around; padding: 0.7rem 0; border-top: 1px solid var(--border-color); z-index: 1000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.7rem; color: var(--text-secondary); border: none; background: none; cursor: pointer; text-decoration: none; flex: 1; }
+        .nav-item .icon { font-size: 1.3rem; }
+        .nav-item.active { color: var(--accent-secondary); }
+
+        /* Profile & Forms */
+        .custom-card { background-color: var(--bg-secondary); border-radius: 15px; border: 1px solid var(--border-color); padding: 20px; }
+        .form-control { background-color: var(--bg-primary); border: 1px solid var(--border-color); color: white; padding: 12px; border-radius: 10px; }
+        .form-control:focus { background-color: var(--bg-primary); color: white; border-color: var(--accent-secondary); box-shadow: none; }
+        
+        .profile-card { background: linear-gradient(135deg, var(--bg-secondary), #25254d); border-radius: 15px; padding: 1.5rem; display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+        .profile-info h3 { font-size: 1.1rem; font-weight: 600; margin: 0; }
+        
+        #globalLoaderEl { background: var(--bg-primary); display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; justify-content: center; align-items: center; }
+        .fancy-spinner { width: 4rem; height: 4rem; border: 4px solid var(--border-color); border-top-color: var(--accent-secondary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .btn-primary-custom { background-color: var(--accent-red); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 600; width: 100%; transition: 0.3s; }
+        .btn-primary-custom:active { transform: scale(0.98); }
+    </style>
+</head>
+<body>
+
+    <header class="app-header">
+        <div class="header-left">
+            <button class="header-back-button" id="headerBackBtn"><i class="fas fa-arrow-left"></i></button>
+            <div class="user-info" id="headerUserInfo">
+                <div class="user-avatar" id="headerAvatar">B</div>
+                <div class="welcome-text">
+                    <h2 id="headerUserGreeting">BattleArena</h2>
+                    <p>Ready for Battle?</p>
+                </div>
+            </div>
+            <div class="header-page-title" id="headerPageTitle"></div>
+        </div>
+        <a href="#" class="wallet-button" id="headerWalletChip" onclick="showSection('wallet-section')">
+            <i class="fa-solid fa-wallet"></i>
+            <span id="headerChipBalance">0.00</span>
+            <span class="plus-icon">+</span>
+        </a>
+    </header>
+
+    <main class="main-content">
+        <div id="globalLoaderEl"><div class="fancy-spinner"></div></div>
+
+        <!-- Login Section -->
+        <section id="login-section" class="section">
+            <div class="container" style="max-width: 400px; margin-top: 10vh;">
+                <div class="text-center mb-4">
+                    <h1 style="color: var(--accent-secondary); font-weight: 700; letter-spacing: 2px;">BATTLEARENA</h1>
+                    <p class="text-secondary">Join the Ultimate Esports Community</p>
+                </div>
+                <div class="custom-card">
+                    <form id="loginForm">
+                        <div class="mb-3"><label class="form-label">Email</label><input type="email" id="loginEmail" class="form-control" placeholder="Enter your email" required></div>
+                        <div class="mb-3"><label class="form-label">Password</label><input type="password" id="loginPass" class="form-control" placeholder="••••••••" required></div>
+                        <div id="loginError" class="text-danger small mb-3" style="display:none;"></div>
+                        <button type="submit" class="btn-primary-custom">LOGIN</button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <span class="text-secondary small">Don't have an account?</span>
+                        <a href="#" class="text-decoration-none small" style="color: var(--accent-secondary);" onclick="toggleAuthForms(true)">Sign Up</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Signup Section -->
+        <section id="signup-section" class="section">
+            <div class="container" style="max-width: 400px; margin-top: 5vh;">
+                <div class="text-center mb-4">
+                    <h1 style="color: var(--accent-secondary); font-weight: 700;">CREATE ACCOUNT</h1>
+                </div>
+                <div class="custom-card">
+                    <form id="signupForm">
+                        <div class="mb-3"><label class="form-label">Full Name</label><input type="text" id="signupName" class="form-control" required></div>
+                        <div class="mb-3"><label class="form-label">Email</label><input type="email" id="signupEmail" class="form-control" required></div>
+                        <div class="mb-3"><label class="form-label">Password</label><input type="password" id="signupPass" class="form-control" required></div>
+                        <div id="signupError" class="text-danger small mb-3" style="display:none;"></div>
+                        <button type="submit" class="btn-primary-custom" style="background-color: var(--accent-secondary); color: var(--bg-primary);">SIGN UP</button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <a href="#" class="text-decoration-none small" style="color: var(--accent-secondary);" onclick="toggleAuthForms(false)">Already have an account? Login</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Home Section -->
+        <section id="home-section" class="section">
+            <div id="promoSlider" class="swiper">
+                <div class="swiper-wrapper" id="promoWrapper">
+                    <!-- Slides loaded via JS -->
+                    <div class="swiper-slide"><img src="https://via.placeholder.com/800x400/1c1c3a/ffffff?text=Welcome+to+BattleArena"></div>
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+
+            <div class="section-header"><h2>Quick Actions</h2><p>Tournament Status</p></div>
+            <div class="contest-categories">
+                <div class="category-card" onclick="showSection('tournaments-section', {status: 'ongoing'})"><div class="icon"><i class="fas fa-play-circle"></i></div><span>ONGOING</span></div>
+                <div class="category-card" onclick="showSection('tournaments-section', {status: 'upcoming'})"><div class="icon"><i class="fas fa-clock"></i></div><span>UPCOMING</span></div>
+                <div class="category-card" onclick="showSection('tournaments-section', {status: 'completed'})"><div class="icon"><i class="fas fa-trophy"></i></div><span>RESULTS</span></div>
+            </div>
+
+            <div class="section-header"><h2>Popular Games</h2><p>Choose your battlefield</p></div>
+            <div class="game-list" id="gamesList">
+                <!-- Games loaded via JS -->
+            </div>
+        </section>
+
+        <!-- Other Sections (Basic Structure) -->
+        <section id="profile-section" class="section">
+            <div class="profile-card">
+                <div class="user-avatar" style="width: 60px; height: 60px; font-size: 1.5rem;" id="profAvatar">B</div>
+                <div>
+                    <h3 id="profName">User Name</h3>
+                    <p class="text-secondary small" id="profEmail">user@example.com</p>
+                </div>
+            </div>
+            <div class="list-group">
+                <button class="btn btn-dark mb-2 text-start p-3" style="background: var(--bg-secondary); border: 1px solid var(--border-color);"><i class="fas fa-wallet me-3"></i> Wallet</button>
+                <button class="btn btn-dark mb-2 text-start p-3" style="background: var(--bg-secondary); border: 1px solid var(--border-color);"><i class="fas fa-gamepad me-3"></i> My Matches</button>
+                <button class="btn btn-danger w-100 mt-4 p-3" id="logoutBtn" style="border-radius: 12px; font-weight: 600;">LOGOUT</button>
+            </div>
+        </section>
+        
+        <section id="wallet-section" class="section">
+            <div class="custom-card text-center mb-3">
+                <h6 class="text-secondary">Current Balance</h6>
+                <h1 style="color: var(--accent-primary);">₹<span id="walletBalance">0.00</span></h1>
+            </div>
+            <button class="btn-primary-custom">ADD MONEY</button>
+        </section>
+
+        <section id="tournaments-section" class="section">
+            <div id="matchListContainer"></div>
+        </section>
+
+    </main>
+
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="showSection('home-section')"><i class="icon fas fa-home"></i><span>Home</span></button>
+        <button class="nav-item" onclick="showSection('tournaments-section')"><i class="icon fas fa-gamepad"></i><span>Matches</span></button>
+        <button class="nav-item" onclick="showSection('wallet-section')"><i class="icon fas fa-wallet"></i><span>Wallet</span></button>
+        <button class="nav-item" onclick="showSection('profile-section')"><i class="icon fas fa-user-circle"></i><span>Profile</span></button>
+    </nav>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getDatabase, ref, get, set, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+
+        // === NEW FIREBASE CONFIG ===
+        const firebaseConfig = {
+            apiKey: "AIzaSyAzLPxnptDNKhoLfSqgC-shC8ptVoZ6aeU",
+            authDomain: "battle-arena-x.firebaseapp.com",
+            projectId: "battle-arena-x",
+            storageBucket: "battle-arena-x.firebasestorage.app",
+            messagingSenderId: "22280909432",
+            appId: "1:22280909432:web:c9af7bc845e964fc6b738d"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const auth = getAuth(app);
+
+        // Global State
+        let currentUser = null;
+
+        // UI Helpers
+        window.showSection = (sectionId, data = {}) => {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Bottom Nav Update
+            document.querySelectorAll('.nav-item').forEach(item => {
+                const spanText = item.querySelector('span').innerText.toLowerCase();
+                if(sectionId.includes(spanText)) item.classList.add('active');
+                else item.classList.remove('active');
+            });
+
+            // Header Management
+            if(sectionId === 'home-section') {
+                document.getElementById('headerUserInfo').style.display = 'flex';
+                document.getElementById('headerBackBtn').style.display = 'none';
+                document.getElementById('headerPageTitle').style.display = 'none';
+            } else {
+                document.getElementById('headerUserInfo').style.display = 'none';
+                document.getElementById('headerBackBtn').style.display = 'block';
+                document.getElementById('headerPageTitle').style.display = 'block';
+                document.getElementById('headerPageTitle').innerText = sectionId.replace('-section', '').toUpperCase();
+            }
+
+            if(sectionId === 'home-section') loadGames();
+        };
+
+        window.toggleAuthForms = (showSignup) => {
+            showSection(showSignup ? 'signup-section' : 'login-section');
+        };
+
+        // Auth Logic
+        onAuthStateChanged(auth, (user) => {
+            document.getElementById('globalLoaderEl').style.display = 'none';
+            if (user) {
+                currentUser = user;
+                syncUserData(user.uid);
+                showSection('home-section');
+            } else {
+                showSection('login-section');
+            }
+        });
+
+        async function syncUserData(uid) {
+            const userRef = ref(db, `users/${uid}`);
+            onValue(userRef, (snapshot) => {
+                if(snapshot.exists()) {
+                    const data = snapshot.val();
+                    document.getElementById('headerUserGreeting').innerText = data.displayName || 'Warrior';
+                    document.getElementById('headerChipBalance').innerText = (data.balance || 0).toFixed(2);
+                    document.getElementById('walletBalance').innerText = (data.balance || 0).toFixed(2);
+                    document.getElementById('headerAvatar').innerText = (data.displayName || 'B').charAt(0);
+                    
+                    // Profile Page
+                    document.getElementById('profName').innerText = data.displayName;
+                    document.getElementById('profEmail').innerText = data.email;
+                    document.getElementById('profAvatar').innerText = (data.displayName || 'B').charAt(0);
+                }
+            });
+        }
+
+        // Login Submit
+        document.getElementById('loginForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPass').value;
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (err) {
+                const errEl = document.getElementById('loginError');
+                errEl.innerText = "Invalid Login Details";
+                errEl.style.display = 'block';
+            }
+        };
+
+        // Signup Submit
+        document.getElementById('signupForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const pass = document.getElementById('signupPass').value;
+            try {
+                const cred = await createUserWithEmailAndPassword(auth, email, pass);
+                await set(ref(db, `users/${cred.user.uid}`), {
+                    uid: cred.user.uid,
+                    displayName: name,
+                    email: email,
+                    balance: 0,
+                    joinedAt: serverTimestamp()
+                });
+            } catch (err) {
+                const errEl = document.getElementById('signupError');
+                errEl.innerText = err.message;
+                errEl.style.display = 'block';
+            }
+        };
+
+        // Logout
+        document.getElementById('logoutBtn').onclick = () => signOut(auth);
+        document.getElementById('headerBackBtn').onclick = () => showSection('home-section');
+
+        // Load Games
+        async function loadGames() {
+            const gamesList = document.getElementById('gamesList');
+            const snap = await get(ref(db, 'games'));
+            if(snap.exists()) {
+                gamesList.innerHTML = '';
+                Object.entries(snap.val()).forEach(([id, game]) => {
+                    gamesList.innerHTML += `
+                        <div class="game-card" onclick="showSection('tournaments-section', {gameId: '${id}'})">
+                            <img src="${game.imageUrl}" alt="${game.name}">
+                            <div style="position:absolute; bottom:0; background:rgba(0,0,0,0.7); width:100%; font-size:10px; text-align:center; padding:2px;">${game.name}</div>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        // Promo Slider Initialization
+        new Swiper(".swiper", {
+            loop: true,
+            autoplay: { delay: 3000 },
+            pagination: { el: ".swiper-pagination", clickable: true }
+        });
+
+    </script>
+</body>
+</html>
