@@ -2,358 +2,451 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>BattleArena - Ultimate Esports</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- SWIPER CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BattleArena Pro - Player Zone</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <style>
-        :root {
-            --bg-primary: #0C0C27; --bg-secondary: #1C1C3A; --text-primary: #FFFFFF;
-            --text-secondary: #A0A0B8; --accent-primary: #FACC15; --accent-secondary: #00E0FF;
-            --accent-red: #F94879; --border-color: #2a2a4a;
-        }
-        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-primary); color: var(--text-primary); padding-top: 70px; padding-bottom: 80px; overflow-x: hidden; }
-        .main-content { padding: 1rem; }
-        .section { display: none; min-height: 80vh; } 
-        .section.active { display: block; animation: fadeIn 0.3s ease; } 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* Header Style */
-        .app-header { position: fixed; top: 0; left: 0; width: 100%; height: 70px; background-color: var(--bg-primary); display: flex; justify-content: space-between; align-items: center; padding: 0 1rem; z-index: 1000; border-bottom: 1px solid var(--border-color); }
-        .app-header .header-left { display: flex; align-items: center; gap: 1rem; }
-        .app-header .header-back-button { background: none; border: none; color: white; font-size: 1.5rem; display: none; }
-        .app-header .header-page-title { font-size: 1.2rem; font-weight: 600; display: none; color: var(--accent-secondary); }
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap');
+        :root { --nagad-red: #e61d2b; --nagad-orange: #f97316; }
+        body { background-color: #f8fafc; font-family: 'Hind Siliguri', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        .user-info { display: flex; align-items: center; gap: 0.75rem; }
-        .user-avatar { width: 45px; height: 45px; border-radius: 50%; background-color: var(--accent-secondary); border: 2px solid #3cffce; display: flex; justify-content: center; align-items: center; font-weight: 700; font-size: 1.1rem; color: var(--bg-primary); text-transform: uppercase; }
-        .welcome-text h2 { font-size: 1rem; font-weight: 600; margin: 0; }
-        .welcome-text p { font-size: 0.8rem; color: var(--text-secondary); margin: 0; }
-
-        .wallet-button { display: flex; align-items: center; gap: 0.5rem; background-color: var(--accent-red); padding: 0.5rem 0.9rem; border-radius: 50px; font-weight: 600; font-size: 0.9rem; border: none; color: white; text-decoration: none; transition: 0.3s; }
-        .wallet-button:active { transform: scale(0.95); }
-        .wallet-button .plus-icon { background-color: #fff; color: var(--accent-red); border-radius: 50%; width: 18px; height: 18px; display: inline-flex; justify-content: center; align-items: center; font-weight: bold; font-size: 0.7rem; }
-
-        /* Slider & Cards */
-        .swiper { width: 100%; border-radius: 16px; margin-bottom: 1.5rem; aspect-ratio: 16 / 8; overflow: hidden; }
-        .swiper-slide img { width: 100%; height: 100%; object-fit: cover; }
+        /* UI Enhancements */
+        * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+        input, textarea, .select-text { -webkit-user-select: text !important; user-select: text !important; }
+        .nagad-gradient { background: linear-gradient(135deg, #e61d2b 0%, #ff4d4d 100%); }
+        .card-shadow { box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
         
-        .section-header { margin-bottom: 1rem; border-left: 4px solid var(--accent-red); padding-left: 10px; }
-        .section-header h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 2px; }
-        .section-header p { font-size: 0.8rem; color: var(--text-secondary); margin: 0; }
+        /* Banner Slider */
+        #banner-slider { display: flex; transition: transform 0.5s ease-in-out; }
+        .banner-slide { min-width: 100%; height: 160px; border-radius: 30px; object-fit: cover; }
 
-        .contest-categories { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; margin-bottom: 1.5rem; }
-        .category-card { background-color: var(--bg-secondary); border-radius: 12px; padding: 1rem 0.4rem; text-align: center; border: 1px solid var(--border-color); cursor: pointer; transition: 0.2s; }
-        .category-card:active { background: var(--border-color); }
-        .category-card .icon { font-size: 1.4rem; color: var(--accent-primary); margin-bottom: 0.4rem; }
-        .category-card span { font-size: 0.75rem; font-weight: 600; display: block; }
+        /* Loader */
+        #loader { position: fixed; inset: 0; background: white; z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .ring { width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 4px solid var(--nagad-red); border-radius: 50%; animation: spin 1s infinite linear; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        .game-list { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
-        .game-list::-webkit-scrollbar { display: none; }
-        .game-card { flex: 0 0 130px; height: 130px; border-radius: 14px; overflow: hidden; border: 2px solid #333355; position: relative; }
-        .game-card img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* Bottom Nav */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--bg-secondary); display: flex; justify-content: space-around; padding: 0.7rem 0; border-top: 1px solid var(--border-color); z-index: 1000; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.7rem; color: var(--text-secondary); border: none; background: none; cursor: pointer; text-decoration: none; flex: 1; }
-        .nav-item .icon { font-size: 1.3rem; }
-        .nav-item.active { color: var(--accent-secondary); }
-
-        /* Profile & Forms */
-        .custom-card { background-color: var(--bg-secondary); border-radius: 15px; border: 1px solid var(--border-color); padding: 20px; }
-        .form-control { background-color: var(--bg-primary); border: 1px solid var(--border-color); color: white; padding: 12px; border-radius: 10px; }
-        .form-control:focus { background-color: var(--bg-primary); color: white; border-color: var(--accent-secondary); box-shadow: none; }
+        .tab-page { display: none; animation: slideUp 0.4s ease; }
+        .active-tab { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         
-        .profile-card { background: linear-gradient(135deg, var(--bg-secondary), #25254d); border-radius: 15px; padding: 1.5rem; display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
-        .profile-info h3 { font-size: 1.1rem; font-weight: 600; margin: 0; }
-        
-        #globalLoaderEl { background: var(--bg-primary); display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; justify-content: center; align-items: center; }
-        .fancy-spinner { width: 4rem; height: 4rem; border: 4px solid var(--border-color); border-top-color: var(--accent-secondary); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .btn-primary-custom { background-color: var(--accent-red); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 600; width: 100%; transition: 0.3s; }
-        .btn-primary-custom:active { transform: scale(0.98); }
+        /* Winner Animation */
+        .winner-card { background: linear-gradient(135deg, #fff9c4 0%, #fffde7 100%); border: 2px solid #fbc02d; }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
-    <header class="app-header">
-        <div class="header-left">
-            <button class="header-back-button" id="headerBackBtn"><i class="fas fa-arrow-left"></i></button>
-            <div class="user-info" id="headerUserInfo">
-                <div class="user-avatar" id="headerAvatar">B</div>
-                <div class="welcome-text">
-                    <h2 id="headerUserGreeting">BattleArena</h2>
-                    <p>Ready for Battle?</p>
-                </div>
-            </div>
-            <div class="header-page-title" id="headerPageTitle"></div>
+    <!-- 1. NEATIVE LOADER -->
+    <div id="loader">
+        <div class="ring"></div>
+        <p class="mt-4 font-bold text-red-600 tracking-widest text-[10px] uppercase">BattleArena Pro v3.0</p>
+    </div>
+
+    <!-- 2. AUTH SCREEN -->
+    <div id="auth-screen" class="hidden fixed inset-0 bg-white z-[9000] flex flex-col items-center justify-center p-8">
+        <div class="w-20 h-20 nagad-gradient rounded-[25px] flex items-center justify-center mb-6 shadow-xl">
+            <i class="fas fa-gamepad text-4xl text-white"></i>
         </div>
-        <a href="#" class="wallet-button" id="headerWalletChip" onclick="showSection('wallet-section')">
-            <i class="fa-solid fa-wallet"></i>
-            <span id="headerChipBalance">0.00</span>
-            <span class="plus-icon">+</span>
-        </a>
-    </header>
-
-    <main class="main-content">
-        <div id="globalLoaderEl"><div class="fancy-spinner"></div></div>
-
-        <!-- Login Section -->
-        <section id="login-section" class="section">
-            <div class="container" style="max-width: 400px; margin-top: 10vh;">
-                <div class="text-center mb-4">
-                    <h1 style="color: var(--accent-secondary); font-weight: 700; letter-spacing: 2px;">BATTLEARENA</h1>
-                    <p class="text-secondary">Join the Ultimate Esports Community</p>
-                </div>
-                <div class="custom-card">
-                    <form id="loginForm">
-                        <div class="mb-3"><label class="form-label">Email</label><input type="email" id="loginEmail" class="form-control" placeholder="Enter your email" required></div>
-                        <div class="mb-3"><label class="form-label">Password</label><input type="password" id="loginPass" class="form-control" placeholder="••••••••" required></div>
-                        <div id="loginError" class="text-danger small mb-3" style="display:none;"></div>
-                        <button type="submit" class="btn-primary-custom">LOGIN</button>
-                    </form>
-                    <div class="text-center mt-3">
-                        <span class="text-secondary small">Don't have an account?</span>
-                        <a href="#" class="text-decoration-none small" style="color: var(--accent-secondary);" onclick="toggleAuthForms(true)">Sign Up</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Signup Section -->
-        <section id="signup-section" class="section">
-            <div class="container" style="max-width: 400px; margin-top: 5vh;">
-                <div class="text-center mb-4">
-                    <h1 style="color: var(--accent-secondary); font-weight: 700;">CREATE ACCOUNT</h1>
-                </div>
-                <div class="custom-card">
-                    <form id="signupForm">
-                        <div class="mb-3"><label class="form-label">Full Name</label><input type="text" id="signupName" class="form-control" required></div>
-                        <div class="mb-3"><label class="form-label">Email</label><input type="email" id="signupEmail" class="form-control" required></div>
-                        <div class="mb-3"><label class="form-label">Password</label><input type="password" id="signupPass" class="form-control" required></div>
-                        <div id="signupError" class="text-danger small mb-3" style="display:none;"></div>
-                        <button type="submit" class="btn-primary-custom" style="background-color: var(--accent-secondary); color: var(--bg-primary);">SIGN UP</button>
-                    </form>
-                    <div class="text-center mt-3">
-                        <a href="#" class="text-decoration-none small" style="color: var(--accent-secondary);" onclick="toggleAuthForms(false)">Already have an account? Login</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Home Section -->
-        <section id="home-section" class="section">
-            <div id="promoSlider" class="swiper">
-                <div class="swiper-wrapper" id="promoWrapper">
-                    <!-- Slides loaded via JS -->
-                    <div class="swiper-slide"><img src="https://via.placeholder.com/800x400/1c1c3a/ffffff?text=Welcome+to+BattleArena"></div>
-                </div>
-                <div class="swiper-pagination"></div>
-            </div>
-
-            <div class="section-header"><h2>Quick Actions</h2><p>Tournament Status</p></div>
-            <div class="contest-categories">
-                <div class="category-card" onclick="showSection('tournaments-section', {status: 'ongoing'})"><div class="icon"><i class="fas fa-play-circle"></i></div><span>ONGOING</span></div>
-                <div class="category-card" onclick="showSection('tournaments-section', {status: 'upcoming'})"><div class="icon"><i class="fas fa-clock"></i></div><span>UPCOMING</span></div>
-                <div class="category-card" onclick="showSection('tournaments-section', {status: 'completed'})"><div class="icon"><i class="fas fa-trophy"></i></div><span>RESULTS</span></div>
-            </div>
-
-            <div class="section-header"><h2>Popular Games</h2><p>Choose your battlefield</p></div>
-            <div class="game-list" id="gamesList">
-                <!-- Games loaded via JS -->
-            </div>
-        </section>
-
-        <!-- Other Sections (Basic Structure) -->
-        <section id="profile-section" class="section">
-            <div class="profile-card">
-                <div class="user-avatar" style="width: 60px; height: 60px; font-size: 1.5rem;" id="profAvatar">B</div>
-                <div>
-                    <h3 id="profName">User Name</h3>
-                    <p class="text-secondary small" id="profEmail">user@example.com</p>
-                </div>
-            </div>
-            <div class="list-group">
-                <button class="btn btn-dark mb-2 text-start p-3" style="background: var(--bg-secondary); border: 1px solid var(--border-color);"><i class="fas fa-wallet me-3"></i> Wallet</button>
-                <button class="btn btn-dark mb-2 text-start p-3" style="background: var(--bg-secondary); border: 1px solid var(--border-color);"><i class="fas fa-gamepad me-3"></i> My Matches</button>
-                <button class="btn btn-danger w-100 mt-4 p-3" id="logoutBtn" style="border-radius: 12px; font-weight: 600;">LOGOUT</button>
-            </div>
-        </section>
+        <h2 id="auth-title" class="text-2xl font-bold text-gray-800 mb-2">BattleArena Login</h2>
+        <p class="text-gray-400 text-xs mb-8 uppercase tracking-widest">Conquer the Battlefield</p>
         
-        <section id="wallet-section" class="section">
-            <div class="custom-card text-center mb-3">
-                <h6 class="text-secondary">Current Balance</h6>
-                <h1 style="color: var(--accent-primary);">₹<span id="walletBalance">0.00</span></h1>
+        <form onsubmit="handleAuth(event)" class="w-full max-w-sm space-y-4">
+            <input type="email" id="auth-email" placeholder="ইমেইল এড্রেস" class="w-full bg-gray-50 p-4 rounded-2xl border border-gray-100 outline-none select-text" required>
+            <input type="password" id="auth-pass" placeholder="পাসওয়ার্ড" class="w-full bg-gray-50 p-4 rounded-2xl border border-gray-100 outline-none select-text" required>
+            <button type="submit" id="auth-btn" class="w-full nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg active:scale-95 transition">লগ ইন</button>
+        </form>
+        <p onclick="toggleAuthMode()" id="auth-toggle" class="mt-6 text-sm text-red-600 font-bold cursor-pointer underline">নতুন অ্যাকাউন্ট তৈরি করুন</p>
+    </div>
+
+    <!-- 3. MAIN APP AREA -->
+    <div id="app-body" class="hidden min-h-screen pb-28">
+        
+        <!-- NAGAD HEADER -->
+        <header class="nagad-gradient p-6 pb-28 text-white sticky top-0 z-50 rounded-b-[50px] shadow-2xl">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div id="user-initial" class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-xl font-bold border border-white/30">P</div>
+                    <div>
+                        <h2 class="font-bold text-lg leading-tight uppercase tracking-tighter" id="user-name-display">Player</h2>
+                        <p class="text-[10px] opacity-80 uppercase font-bold tracking-widest text-yellow-300">Pro Member</p>
+                    </div>
+                </div>
+                <button onclick="logoutUser()" class="bg-white/10 w-10 h-10 rounded-2xl flex items-center justify-center border border-white/10 active:bg-red-800">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
             </div>
-            <button class="btn-primary-custom">ADD MONEY</button>
-        </section>
+            
+            <div class="mt-8 flex justify-between items-end">
+                <div>
+                    <p class="text-[10px] uppercase font-bold opacity-60 mb-1">My Balance</p>
+                    <h3 class="text-3xl font-bold italic">৳ <span id="user-balance">0.00</span></h3>
+                </div>
+                <button onclick="switchPage('profile')" class="bg-yellow-400 text-red-700 px-4 py-1.5 rounded-full text-[10px] font-black uppercase shadow-lg">Add Money</button>
+            </div>
+        </header>
 
-        <section id="tournaments-section" class="section">
-            <div id="matchListContainer"></div>
-        </section>
+        <main class="px-5 -mt-16 relative z-[600]">
+            
+            <!-- AUTO BANNER SLIDER -->
+            <div class="bg-white rounded-[35px] p-2 card-shadow mb-6 overflow-hidden border border-gray-50">
+                <div id="banner-wrapper" class="overflow-hidden rounded-[30px]">
+                    <div id="banner-slider">
+                        <!-- Banners from Firebase -->
+                    </div>
+                </div>
+            </div>
 
-    </main>
+            <!-- TAB: HOME (Matches) -->
+            <div id="tab-home" class="tab-page active-tab">
+                <div class="flex justify-between items-center mb-5 px-2">
+                    <h3 class="font-bold text-gray-800 text-lg">Active Tournaments</h3>
+                    <div class="w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
+                </div>
+                <div id="match-list" class="space-y-6">
+                    <!-- Matches Render -->
+                </div>
+            </div>
 
-    <nav class="bottom-nav">
-        <button class="nav-item active" onclick="showSection('home-section')"><i class="icon fas fa-home"></i><span>Home</span></button>
-        <button class="nav-item" onclick="showSection('tournaments-section')"><i class="icon fas fa-gamepad"></i><span>Matches</span></button>
-        <button class="nav-item" onclick="showSection('wallet-section')"><i class="icon fas fa-wallet"></i><span>Wallet</span></button>
-        <button class="nav-item" onclick="showSection('profile-section')"><i class="icon fas fa-user-circle"></i><span>Profile</span></button>
-    </nav>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    
+            <!-- TAB: MY MATCHES (Results & Leaderboard) -->
+            <div id="tab-joined" class="tab-page">
+                <h3 class="font-bold text-gray-800 text-lg mb-5 px-2 uppercase tracking-widest">Participated</h3>
+                <div id="my-matches-list" class="space-y-4"></div>
+            </div>
+
+            <!-- TAB: PROFILE & WALLET -->
+            <div id="tab-profile" class="tab-page text-center">
+                <div class="bg-white p-8 rounded-[40px] card-shadow border border-gray-50">
+                    <div class="w-20 h-20 nagad-gradient rounded-[30px] mx-auto mb-4 flex items-center justify-center text-3xl font-bold text-white shadow-xl">B</div>
+                    <h2 class="text-xl font-bold text-gray-800 uppercase" id="prof-name">Player Name</h2>
+                    <p class="text-xs text-gray-400 mb-6" id="prof-email">email@example.com</p>
+                    
+                    <div class="grid grid-cols-2 gap-3 mb-6">
+                        <div class="bg-gray-50 p-4 rounded-3xl">
+                            <p class="text-[9px] font-bold text-gray-400 uppercase">Referrals</p>
+                            <h4 class="font-bold text-red-600">0</h4>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-3xl">
+                            <p class="text-[9px] font-bold text-gray-400 uppercase">Points</p>
+                            <h4 class="font-bold text-red-600">0</h4>
+                        </div>
+                    </div>
+                    <button class="w-full bg-gray-100 py-4 rounded-2xl font-bold text-gray-400 text-sm mb-3">Withdraw Wallet</button>
+                    <button onclick="logoutUser()" class="w-full text-red-600 font-bold text-sm">Logout Account</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- BOTTOM NAV -->
+        <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex justify-around p-4 z-[2000] rounded-t-[40px] shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
+            <button onclick="switchPage('home')" id="nav-home" class="nav-icon text-red-600 flex flex-col items-center">
+                <i class="fas fa-home text-xl"></i><span class="text-[9px] mt-1 font-bold">Home</span>
+            </button>
+            <button onclick="switchPage('joined')" id="nav-joined" class="nav-icon text-gray-300 flex flex-col items-center">
+                <i class="fas fa-trophy text-xl"></i><span class="text-[9px] mt-1 font-bold">Matches</span>
+            </button>
+            <button onclick="switchPage('profile')" id="nav-profile" class="nav-icon text-gray-300 flex flex-col items-center">
+                <i class="fas fa-user-circle text-xl"></i><span class="text-[9px] mt-1 font-bold">Profile</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- MODAL: JOIN MATCH -->
+    <div id="modal-join" class="fixed inset-0 bg-black/60 z-[10000] hidden items-center justify-center p-6 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-sm rounded-[45px] p-8 shadow-2xl text-center">
+            <h3 class="text-xl font-bold mb-2 text-red-600 uppercase tracking-widest">Confirm Entry</h3>
+            <p class="text-[11px] text-gray-500 mb-6 font-bold uppercase">Pay ৳<span id="pay-fee">0</span> to: 01777355727 (Nagad)</p>
+            <form id="join-form" class="space-y-4">
+                <input type="hidden" id="join-match-id">
+                <input type="text" id="join-pname" placeholder="Free Fire Nickname" class="w-full bg-gray-50 p-4 rounded-2xl outline-none select-text border border-gray-100 font-bold" required>
+                <input type="text" id="join-uid" placeholder="FF Game UID" class="w-full bg-gray-50 p-4 rounded-2xl outline-none select-text border border-gray-100 font-bold" required>
+                <input type="text" id="join-trx" placeholder="Transaction ID (TrxID)" class="w-full bg-gray-50 p-4 rounded-2xl outline-none select-text border border-gray-100 font-bold" required>
+                
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closeModal('modal-join')" class="flex-1 bg-gray-100 py-4 rounded-2xl font-bold text-gray-400">BACK</button>
+                    <button type="submit" class="flex-[2] nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg">JOIN NOW</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION POPUP -->
+    <div id="notif-modal" class="fixed top-10 left-6 right-6 bg-yellow-400 p-5 rounded-[30px] shadow-2xl z-[15000] hidden animate-bounce">
+        <div class="flex items-center gap-4">
+            <i class="fas fa-bullhorn text-2xl text-red-700"></i>
+            <div>
+                <h4 class="font-black text-red-800 text-xs uppercase">Breaking News!</h4>
+                <p id="notif-msg" class="text-[11px] text-red-900 font-bold leading-tight mt-1"></p>
+            </div>
+            <button onclick="this.parentElement.parentElement.style.display='none'" class="ml-auto text-red-900"><i class="fas fa-times-circle"></i></button>
+        </div>
+    </div>
+
+    <!-- FIREBASE SYSTEM -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getDatabase, ref, get, set, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
-        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // === NEW FIREBASE CONFIG ===
         const firebaseConfig = {
-            apiKey: "AIzaSyAzLPxnptDNKhoLfSqgC-shC8ptVoZ6aeU",
-            authDomain: "battle-arena-x.firebaseapp.com",
-            projectId: "battle-arena-x",
-            storageBucket: "battle-arena-x.firebasestorage.app",
-            messagingSenderId: "22280909432",
-            appId: "1:22280909432:web:c9af7bc845e964fc6b738d"
+            apiKey: "AIzaSyDUHOA9iEYJGpkuRWgjCg8L00sQpW-36sk",
+            authDomain: "yk-tournament-719d3.firebaseapp.com",
+            projectId: "yk-tournament-719d3",
+            storageBucket: "yk-tournament-719d3.firebasestorage.app",
+            messagingSenderId: "489185516491",
+            appId: "1:489185516491:web:a12f64894cb05e1467344e",
+            measurementId: "G-N3HSR1VPF8"
         };
 
         const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+        const db = getFirestore(app);
         const auth = getAuth(app);
-
-        // Global State
         let currentUser = null;
 
-        // UI Helpers
-        window.showSection = (sectionId, data = {}) => {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
-            
-            // Bottom Nav Update
-            document.querySelectorAll('.nav-item').forEach(item => {
-                const spanText = item.querySelector('span').innerText.toLowerCase();
-                if(sectionId.includes(spanText)) item.classList.add('active');
-                else item.classList.remove('active');
-            });
-
-            // Header Management
-            if(sectionId === 'home-section') {
-                document.getElementById('headerUserInfo').style.display = 'flex';
-                document.getElementById('headerBackBtn').style.display = 'none';
-                document.getElementById('headerPageTitle').style.display = 'none';
-            } else {
-                document.getElementById('headerUserInfo').style.display = 'none';
-                document.getElementById('headerBackBtn').style.display = 'block';
-                document.getElementById('headerPageTitle').style.display = 'block';
-                document.getElementById('headerPageTitle').innerText = sectionId.replace('-section', '').toUpperCase();
-            }
-
-            if(sectionId === 'home-section') loadGames();
-        };
-
-        window.toggleAuthForms = (showSignup) => {
-            showSection(showSignup ? 'signup-section' : 'login-section');
-        };
-
-        // Auth Logic
-        onAuthStateChanged(auth, (user) => {
-            document.getElementById('globalLoaderEl').style.display = 'none';
-            if (user) {
-                currentUser = user;
-                syncUserData(user.uid);
-                showSection('home-section');
-            } else {
-                showSection('login-section');
-            }
+        // --- AUTH & INITIALIZATION ---
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').style.display = 'none';
+                onAuthStateChanged(auth, user => {
+                    if (user) {
+                        currentUser = user;
+                        document.getElementById('auth-screen').classList.add('hidden');
+                        document.getElementById('app-body').classList.remove('hidden');
+                        initPlayerEngine();
+                    } else {
+                        document.getElementById('auth-screen').classList.remove('hidden');
+                        document.getElementById('app-body').classList.add('hidden');
+                    }
+                });
+            }, 1500);
         });
 
-        async function syncUserData(uid) {
-            const userRef = ref(db, `users/${uid}`);
-            onValue(userRef, (snapshot) => {
-                if(snapshot.exists()) {
-                    const data = snapshot.val();
-                    document.getElementById('headerUserGreeting').innerText = data.displayName || 'Warrior';
-                    document.getElementById('headerChipBalance').innerText = (data.balance || 0).toFixed(2);
-                    document.getElementById('walletBalance').innerText = (data.balance || 0).toFixed(2);
-                    document.getElementById('headerAvatar').innerText = (data.displayName || 'B').charAt(0);
+        window.handleAuth = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            const pass = document.getElementById('auth-pass').value;
+            const isLogin = document.getElementById('auth-btn').innerText === 'লগ ইন';
+            try {
+                if(isLogin) await signInWithEmailAndPassword(auth, email, pass);
+                else {
+                    const res = await createUserWithEmailAndPassword(auth, email, pass);
+                    // Create user doc
+                    await addDoc(collection(db, "users"), { uid: res.user.uid, email: email, balance: 0, createdAt: new Date() });
+                }
+            } catch (err) { alert(err.message); }
+        };
+
+        window.toggleAuthMode = () => {
+            const btn = document.getElementById('auth-btn');
+            const toggle = document.getElementById('auth-toggle');
+            if(btn.innerText === 'লগ ইন') {
+                btn.innerText = 'সাইন আপ';
+                toggle.innerText = 'আগের অ্যাকাউন্টে লগ ইন করুন';
+            } else {
+                btn.innerText = 'লগ ইন';
+                toggle.innerText = 'নতুন অ্যাকাউন্ট তৈরি করুন';
+            }
+        };
+
+        window.logoutUser = () => signOut(auth);
+
+        // --- TAB & UI ENGINE ---
+        window.switchPage = (id) => {
+            document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active-tab'));
+            document.getElementById('tab-'+id).classList.add('active-tab');
+            document.querySelectorAll('.nav-icon').forEach(n => n.classList.replace('text-red-600', 'text-gray-300'));
+            document.getElementById('nav-'+id).classList.replace('text-gray-300', 'text-red-600');
+        };
+
+        window.openModal = (id) => document.getElementById(id).style.display = 'flex';
+        window.closeModal = (id) => document.getElementById(id).style.display = 'none';
+
+        // --- CORE PLAYER ENGINE ---
+        function initPlayerEngine() {
+            syncUserData();
+            syncBanners();
+            syncMatches();
+            syncMyParticipations();
+            syncNotifications();
+        }
+
+        function syncUserData() {
+            // Mock balance sync (since direct wallet depends on your admin strategy)
+            document.getElementById('prof-email').innerText = currentUser.email;
+            document.getElementById('user-name-display').innerText = currentUser.email.split('@')[0];
+            document.getElementById('prof-name').innerText = currentUser.email.split('@')[0];
+            document.getElementById('user-initial').innerText = currentUser.email[0].toUpperCase();
+        }
+
+        // --- BANNER SLIDER LOGIC ---
+        function syncBanners() {
+            const slider = document.getElementById('banner-slider');
+            onSnapshot(collection(db, "banners"), snap => {
+                slider.innerHTML = '';
+                if(snap.empty) {
+                    slider.innerHTML = `<img src="https://via.placeholder.com/600x250/e61d2b/ffffff?text=BattleArena+Live" class="banner-slide">`;
+                    return;
+                }
+                snap.forEach(d => {
+                    slider.innerHTML += `<img src="${d.data().img}" class="banner-slide">`;
+                });
+                startSlider(snap.size);
+            });
+        }
+
+        let slideIndex = 0;
+        function startSlider(count) {
+            if(count <= 1) return;
+            setInterval(() => {
+                slideIndex++;
+                if(slideIndex >= count) slideIndex = 0;
+                document.getElementById('banner-slider').style.transform = `translateX(-${slideIndex * 100}%)`;
+            }, 4000);
+        }
+
+        // --- MATCHES ENGINE ---
+        function syncMatches() {
+            const list = document.getElementById('match-list');
+            onSnapshot(query(collection(db, "matches"), where("status", "!=", "completed"), orderBy("status", "desc")), snap => {
+                list.innerHTML = '';
+                snap.forEach(d => {
+                    const m = d.data();
+                    list.innerHTML += `
+                        <div class="bg-white p-6 rounded-[40px] card-shadow border border-gray-50 overflow-hidden relative">
+                            <div class="flex justify-between items-start mb-4">
+                                <span class="bg-red-50 text-red-600 text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-widest">${m.map} | ${m.type}</span>
+                                <span class="text-[10px] font-black text-gray-300 uppercase">${m.releaseTime}</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 uppercase mb-5">${m.title}</h3>
+                            <div class="grid grid-cols-3 gap-2 mb-6">
+                                <div class="bg-gray-50 p-3 rounded-3xl text-center">
+                                    <p class="text-[8px] text-gray-400 font-bold uppercase">Prize</p>
+                                    <p class="text-sm font-black text-green-600">৳${m.prize}</p>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded-3xl text-center border-x border-white">
+                                    <p class="text-[8px] text-gray-400 font-bold uppercase">Entry</p>
+                                    <p class="text-sm font-black text-red-600">৳${m.fee}</p>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded-3xl text-center">
+                                    <p class="text-[8px] text-gray-400 font-bold uppercase">Status</p>
+                                    <p class="text-sm font-black text-blue-600 uppercase tracking-tighter">${m.status}</p>
+                                </div>
+                            </div>
+                            <button onclick="setupJoin('${d.id}', '${m.fee}')" class="w-full nagad-gradient text-white py-4 rounded-3xl font-bold shadow-lg active:scale-95 transition uppercase text-xs tracking-widest">Join Tournament</button>
+                        </div>`;
+                });
+            });
+        }
+
+        window.setupJoin = (id, fee) => {
+            document.getElementById('join-match-id').value = id;
+            document.getElementById('pay-fee').innerText = fee;
+            openModal('modal-join');
+        };
+
+        document.getElementById('join-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const data = {
+                uid: currentUser.uid,
+                matchID: document.getElementById('join-match-id').value,
+                playerName: document.getElementById('join-pname').value,
+                gameID: document.getElementById('join-uid').value,
+                trxID: document.getElementById('join-trx').value,
+                fee: document.getElementById('pay-fee').innerText,
+                status: 'pending',
+                timestamp: new Date().getTime()
+            };
+            await addDoc(collection(db, "registrations"), data);
+            alert("Join Request Sent! Wait for approval.");
+            closeModal('modal-join');
+        };
+
+        // --- RESULTS & LEADERBOARD SYSTEM ---
+        function syncMyParticipations() {
+            const list = document.getElementById('my-matches-list');
+            onSnapshot(query(collection(db, "registrations"), where("uid", "==", currentUser.uid)), async snap => {
+                list.innerHTML = '';
+                if(snap.empty) list.innerHTML = `<p class="text-center text-gray-400 text-xs mt-10">You haven't joined any matches yet.</p>`;
+                
+                for (const regDoc of snap.docs) {
+                    const r = regDoc.data();
+                    const matchSnap = await getDoc(doc(db, "matches", r.matchID));
+                    const m = matchSnap.data();
                     
-                    // Profile Page
-                    document.getElementById('profName').innerText = data.displayName;
-                    document.getElementById('profEmail').innerText = data.email;
-                    document.getElementById('profAvatar').innerText = (data.displayName || 'B').charAt(0);
+                    let statusBox = `<div class="mt-3 bg-orange-50 text-orange-600 text-[10px] p-3 rounded-2xl font-bold text-center">WAITING FOR APPROVAL</div>`;
+                    
+                    if(r.status === 'approved') {
+                        if(m.status === 'live') {
+                            statusBox = `
+                                <div class="mt-3 bg-green-50 p-4 rounded-[30px] border-2 border-dashed border-green-200">
+                                    <p class="text-[9px] text-green-600 font-black uppercase text-center mb-1">Room ID & Password</p>
+                                    <div class="flex justify-around text-sm font-mono font-bold text-gray-800">
+                                        <span class="select-text">ID: ${m.roomID}</span>
+                                        <span class="select-text">PS: ${m.roomPass}</span>
+                                    </div>
+                                </div>`;
+                        } else if(m.status === 'completed') {
+                            statusBox = `<button onclick="loadLeaderboard('${r.matchID}')" class="mt-3 w-full bg-purple-600 text-white py-3 rounded-2xl font-bold text-[10px] uppercase">View Leaderboard & Points</button>`;
+                        } else {
+                            statusBox = `<div class="mt-3 bg-blue-50 text-blue-600 text-[10px] p-3 rounded-2xl font-bold text-center">APPROVED! WAIT FOR ROOM INFO</div>`;
+                        }
+                    }
+
+                    list.innerHTML += `
+                        <div class="bg-white p-5 rounded-[40px] card-shadow border border-gray-50">
+                            <h4 class="font-bold text-gray-800 text-sm uppercase">${m.title}</h4>
+                            <p class="text-[9px] text-gray-400 font-bold uppercase mt-1">Player: ${r.playerName}</p>
+                            ${statusBox}
+                        </div>`;
                 }
             });
         }
 
-        // Login Submit
-        document.getElementById('loginForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const pass = document.getElementById('loginPass').value;
-            try {
-                await signInWithEmailAndPassword(auth, email, pass);
-            } catch (err) {
-                const errEl = document.getElementById('loginError');
-                errEl.innerText = "Invalid Login Details";
-                errEl.style.display = 'block';
-            }
-        };
-
-        // Signup Submit
-        document.getElementById('signupForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const name = document.getElementById('signupName').value;
-            const email = document.getElementById('signupEmail').value;
-            const pass = document.getElementById('signupPass').value;
-            try {
-                const cred = await createUserWithEmailAndPassword(auth, email, pass);
-                await set(ref(db, `users/${cred.user.uid}`), {
-                    uid: cred.user.uid,
-                    displayName: name,
-                    email: email,
-                    balance: 0,
-                    joinedAt: serverTimestamp()
-                });
-            } catch (err) {
-                const errEl = document.getElementById('signupError');
-                errEl.innerText = err.message;
-                errEl.style.display = 'block';
-            }
-        };
-
-        // Logout
-        document.getElementById('logoutBtn').onclick = () => signOut(auth);
-        document.getElementById('headerBackBtn').onclick = () => showSection('home-section');
-
-        // Load Games
-        async function loadGames() {
-            const gamesList = document.getElementById('gamesList');
-            const snap = await get(ref(db, 'games'));
-            if(snap.exists()) {
-                gamesList.innerHTML = '';
-                Object.entries(snap.val()).forEach(([id, game]) => {
-                    gamesList.innerHTML += `
-                        <div class="game-card" onclick="showSection('tournaments-section', {gameId: '${id}'})">
-                            <img src="${game.imageUrl}" alt="${game.name}">
-                            <div style="position:absolute; bottom:0; background:rgba(0,0,0,0.7); width:100%; font-size:10px; text-align:center; padding:2px;">${game.name}</div>
+        window.loadLeaderboard = async (matchId) => {
+            const resultQuery = query(collection(db, "results"), where("matchId", "==", matchId));
+            const snap = await getDocs(resultQuery);
+            if(snap.empty) return alert("Result coming soon...");
+            
+            const data = snap.docs[0].data();
+            let table = `<div class="fixed inset-0 bg-white z-[20000] p-6 overflow-y-auto">
+                <button onclick="this.parentElement.remove()" class="mb-6 text-red-600 font-bold"><i class="fas fa-arrow-left mr-2"></i> Go Back</button>
+                <h3 class="text-xl font-black text-center mb-8 uppercase tracking-widest text-red-600">Leaderboard</h3>
+                <div class="space-y-3">`;
+            
+            data.leaderboard.sort((a,b) => b.total - a.total).forEach((p, index) => {
+                const isWinner = index === 0;
+                table += `
+                    <div class="p-5 rounded-[30px] flex justify-between items-center ${isWinner ? 'winner-card shadow-lg shadow-yellow-200 border-2' : 'bg-gray-50'}">
+                        <div class="flex items-center gap-4">
+                            <span class="text-lg font-black ${isWinner ? 'text-yellow-700' : 'text-gray-300'}">#${p.rank}</span>
+                            <div>
+                                <h4 class="font-bold text-gray-800 text-sm uppercase">${p.name} ${isWinner ? '👑' : ''}</h4>
+                                <p class="text-[9px] text-gray-400 font-bold uppercase">Kills: ${p.kills}</p>
+                            </div>
                         </div>
-                    `;
-                });
-            }
-        }
+                        <div class="text-right">
+                            <p class="text-xs font-black text-red-600">${p.total} PTS</p>
+                        </div>
+                    </div>`;
+            });
+            table += `</div></div>`;
+            document.body.insertAdjacentHTML('beforeend', table);
+        };
 
-        // Promo Slider Initialization
-        new Swiper(".swiper", {
-            loop: true,
-            autoplay: { delay: 3000 },
-            pagination: { el: ".swiper-pagination", clickable: true }
-        });
+        // --- NOTIFICATION SYSTEM ---
+        function syncNotifications() {
+            const modal = document.getElementById('notif-modal');
+            const msgEl = document.getElementById('notif-msg');
+            onSnapshot(query(collection(db, "notifications"), orderBy("createdAt", "desc")), snap => {
+                if(!snap.empty) {
+                    const latest = snap.docs[0].data();
+                    msgEl.innerText = latest.msg;
+                    modal.classList.remove('hidden');
+                    // Hide after 8 seconds
+                    setTimeout(() => modal.classList.add('hidden'), 8000);
+                }
+            });
+        }
 
     </script>
 </body>
-</html>
+                </html>
