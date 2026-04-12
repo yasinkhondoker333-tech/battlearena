@@ -3,26 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BattleArena Pro - Master Admin</title>
+    <title>BattleArena Pro Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap');
         :root { --nagad-red: #e61d2b; --nagad-orange: #f97316; }
         body { background-color: #ffffff; font-family: 'Hind Siliguri', sans-serif; -webkit-tap-highlight-color: transparent; }
-        
         * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
-        input, textarea, .select-text { -webkit-user-select: text !important; user-select: text !important; }
-
+        input, textarea, select, .select-text { -webkit-user-select: text !important; user-select: text !important; }
         .nagad-gradient { background: linear-gradient(135deg, #e61d2b 0%, #ff4d4d 100%); }
         .card-shadow { box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
         .grid-icon { width: 55px; height: 55px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; font-size: 1.4rem; transition: 0.2s; }
         .grid-icon:active { transform: scale(0.9); }
-
         #loader { position: fixed; inset: 0; background: white; z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .ring { width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 4px solid var(--nagad-red); border-radius: 50%; animation: spin 1s infinite linear; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-
         .tab-page { display: none; animation: slideUp 0.4s ease; }
         .active-tab { display: block; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -30,21 +26,19 @@
 </head>
 <body oncontextmenu="return false;">
 
-    <!-- 1. LOADING SCREEN -->
+    <!-- 1. IMPROVED LOADER -->
     <div id="loader">
         <div class="ring"></div>
-        <p class="mt-4 font-bold text-red-600 tracking-widest text-[10px] uppercase">BattleArena Pro Loading...</p>
+        <p class="mt-4 font-bold text-red-600 tracking-widest text-[10px] uppercase">BattleArena v3.0 Loading...</p>
     </div>
 
-    <!-- 2. PIN SCREEN (yasin999) -->
+    <!-- 2. SECURITY PIN (yasin999) -->
     <div id="pin-screen" class="hidden fixed inset-0 bg-white z-[9000] flex flex-col items-center justify-center p-8 text-center">
-        <div class="w-16 h-16 bg-red-50 rounded-[22px] flex items-center justify-center mb-6">
-            <i class="fas fa-user-shield text-3xl text-red-600"></i>
-        </div>
-        <h2 class="text-2xl font-bold text-gray-800 mb-1">BattleArena Admin</h2>
-        <p class="text-gray-400 text-xs mb-10 tracking-widest uppercase">Master Security Check</p>
+        <div class="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mb-6"><i class="fas fa-user-shield text-3xl text-red-600"></i></div>
+        <h2 class="text-2xl font-bold text-gray-800">Admin Access</h2>
+        <p class="text-gray-400 text-xs mb-10 tracking-widest">ENTER MASTER PIN</p>
         <input type="password" id="pin-input" maxlength="8" placeholder="••••••" class="w-full max-w-xs bg-gray-50 p-5 rounded-[30px] text-center text-3xl tracking-[15px] border-2 border-gray-100 focus:border-red-500 outline-none mb-8 transition-all">
-        <button onclick="verifyPin()" class="w-full max-w-xs nagad-gradient text-white py-4 rounded-[25px] font-bold shadow-xl active:scale-95 transition">লগ ইন করুন</button>
+        <button onclick="verifyPin()" class="w-full max-w-xs nagad-gradient text-white py-4 rounded-[25px] font-bold shadow-xl active:scale-95 transition">Access Dashboard</button>
     </div>
 
     <!-- 3. MAIN DASHBOARD -->
@@ -53,21 +47,18 @@
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-xl font-bold border border-white/30">Y</div>
-                    <div>
-                        <h2 class="font-bold text-lg leading-tight">Yasin Admin</h2>
-                        <p class="text-[10px] opacity-80 uppercase font-bold tracking-widest italic text-yellow-300">Master Access</p>
-                    </div>
+                    <div><h2 class="font-bold text-lg leading-tight">Yasin Admin</h2><p class="text-[10px] opacity-80 uppercase font-bold tracking-widest">Master Control</p></div>
                 </div>
                 <button onclick="exitAdmin()" class="bg-white/10 w-10 h-10 rounded-2xl flex items-center justify-center active:bg-red-800"><i class="fas fa-power-off"></i></button>
             </div>
             <div class="grid grid-cols-2 gap-4 mt-8">
-                <div class="bg-white/10 backdrop-blur-xl p-4 rounded-[30px] border border-white/10"><p class="text-[9px] uppercase font-bold opacity-60">Income</p><h3 class="text-xl font-bold">৳ <span id="stat-money">0.00</span></h3></div>
-                <div class="bg-white/10 backdrop-blur-xl p-4 rounded-[30px] border border-white/10"><p class="text-[9px] uppercase font-bold opacity-60">Players</p><h3 class="text-xl font-bold" id="stat-users">0</h3></div>
+                <div class="bg-white/10 backdrop-blur-xl p-4 rounded-[30px] border border-white/10"><p class="text-[9px] uppercase font-bold opacity-60">Total Income</p><h3 class="text-xl font-bold">৳ <span id="stat-money">0.00</span></h3></div>
+                <div class="bg-white/10 backdrop-blur-xl p-4 rounded-[30px] border border-white/10"><p class="text-[9px] uppercase font-bold opacity-60">Live Users</p><h3 class="text-xl font-bold" id="stat-users">0</h3></div>
             </div>
         </header>
 
         <main class="px-5 -mt-16 relative z-[600]">
-            <!-- Service Grid -->
+            <!-- HOME GRID MENU -->
             <div id="tab-home" class="tab-page active-tab bg-white rounded-[40px] p-8 card-shadow grid grid-cols-3 gap-y-12 gap-x-4 text-center mb-8 border border-gray-50">
                 <div onclick="switchPage('matches')" class="flex flex-col items-center">
                     <div class="grid-icon bg-red-50 text-red-600 shadow-sm"><i class="fas fa-trophy"></i></div>
@@ -82,21 +73,21 @@
                     <div class="grid-icon bg-orange-50 text-orange-600 shadow-sm"><i class="fas fa-images"></i></div>
                     <span class="text-[10px] font-bold text-gray-500 uppercase">ব্যানার</span>
                 </div>
-                <div onclick="switchPage('leaderboard')" class="flex flex-col items-center">
-                    <div class="grid-icon bg-purple-50 text-purple-600 shadow-sm"><i class="fas fa-chart-bar"></i></div>
-                    <span class="text-[10px] font-bold text-gray-500 uppercase">লিডারবোর্ড</span>
+                <div onclick="switchPage('results')" class="flex flex-col items-center">
+                    <div class="grid-icon bg-purple-50 text-purple-600 shadow-sm"><i class="fas fa-poll-h"></i></div>
+                    <span class="text-[10px] font-bold text-gray-500 uppercase">রেজাল্ট</span>
                 </div>
                 <div onclick="switchPage('notify')" class="flex flex-col items-center">
                     <div class="grid-icon bg-yellow-50 text-yellow-600 shadow-sm"><i class="fas fa-bullhorn"></i></div>
                     <span class="text-[10px] font-bold text-gray-500 uppercase">নোটিশ</span>
                 </div>
                 <div onclick="switchPage('players')" class="flex flex-col items-center">
-                    <div class="grid-icon bg-green-50 text-green-600 shadow-sm"><i class="fas fa-users-cog"></i></div>
-                    <span class="text-[10px] font-bold text-gray-500 uppercase">ইউজার</span>
+                    <div class="grid-icon bg-green-50 text-green-600 shadow-sm"><i class="fas fa-shield-alt"></i></div>
+                    <span class="text-[10px] font-bold text-gray-500 uppercase">সিকিউরিটি</span>
                 </div>
             </div>
 
-            <!-- Page 1: Matches -->
+            <!-- Page: Matches -->
             <div id="tab-matches" class="tab-page">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="font-bold text-gray-800 text-lg">ম্যাচ কন্ট্রোল</h3>
@@ -105,79 +96,84 @@
                 <div id="match-list" class="space-y-4"></div>
             </div>
 
-            <!-- Page 2: Banner (Gallery Upload) -->
-            <div id="tab-banner" class="tab-page">
-                <div class="bg-white p-6 rounded-[35px] card-shadow mb-8 text-center border border-gray-100">
-                    <h3 class="font-bold text-gray-800 mb-2 uppercase text-sm">Banner Management</h3>
-                    <p class="text-[10px] text-gray-400 mb-6 font-bold">গ্যালারি থেকে ছবি সিলেক্ট করুন</p>
-                    <input type="file" id="file-input" accept="image/*" class="hidden" onchange="previewImage(event)">
-                    <div onclick="document.getElementById('file-input').click()" id="upload-preview" class="w-full h-40 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center cursor-pointer overflow-hidden mb-6">
-                        <i class="fas fa-cloud-upload-alt text-3xl text-gray-300"></i>
-                        <span class="text-xs text-gray-400 mt-2">ফাইল ম্যানেজার থেকে ছবি নিন</span>
+            <!-- Page: Result Manager (New) -->
+            <div id="tab-results" class="tab-page">
+                <div class="bg-white p-6 rounded-[35px] card-shadow mb-6 border border-gray-50">
+                    <h3 class="font-bold text-gray-800 mb-4 uppercase text-sm">Add Match Result</h3>
+                    <select id="result-match-select" class="w-full bg-gray-50 p-4 rounded-2xl outline-none mb-4 border border-gray-100 text-sm font-bold">
+                        <option value="">ম্যাচ সিলেক্ট করুন</option>
+                    </select>
+                    <div id="result-entry-form" class="space-y-3 hidden">
+                        <input type="text" id="res-player" placeholder="Player Name" class="w-full bg-gray-50 p-3 rounded-xl outline-none select-text text-sm">
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" id="res-rank" placeholder="Placement (1,2,3)" class="bg-gray-50 p-3 rounded-xl outline-none select-text text-sm">
+                            <input type="number" id="res-kills" placeholder="Kills" class="bg-gray-50 p-3 rounded-xl outline-none select-text text-sm">
+                        </div>
+                        <button onclick="addPlayerToResult()" class="w-full bg-blue-600 text-white py-2 rounded-xl text-xs font-bold uppercase">Add to List</button>
+                        
+                        <div class="mt-6 border-t pt-4">
+                            <h4 class="text-[10px] font-black text-gray-400 uppercase mb-2">Temp Leaderboard</h4>
+                            <div id="temp-leader-list" class="space-y-1 mb-4"></div>
+                            <button onclick="publishFinalResult()" class="w-full nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg uppercase">Calculate & Publish</button>
+                        </div>
                     </div>
-                    <button id="upload-btn" onclick="uploadBannerAction()" class="w-full nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg opacity-50 cursor-not-allowed" disabled>UPLOAD NOW</button>
                 </div>
-                <div id="banner-list" class="flex gap-4 overflow-x-auto pb-4"></div>
             </div>
 
-            <!-- Page 3: Verify (Payments) -->
+            <!-- Page: Verify -->
             <div id="tab-verify" class="tab-page">
                 <h3 class="font-bold text-gray-800 text-lg mb-4">পেমেন্ট রিকোয়েস্ট</h3>
                 <div id="verify-list" class="space-y-4"></div>
             </div>
 
-            <!-- Page 4: Notification -->
-            <div id="tab-notify" class="tab-page">
+            <!-- Page: Banner -->
+            <div id="tab-banner" class="tab-page">
                 <div class="bg-white p-6 rounded-[35px] card-shadow border border-gray-50 text-center">
-                    <h3 class="font-bold text-gray-800 mb-4 uppercase">Announcement System</h3>
-                    <textarea id="notif-text" rows="4" placeholder="প্লেয়ারদের জন্য মেসেজটি লিখুন..." class="w-full bg-gray-50 p-5 rounded-3xl outline-none select-text border border-gray-100 text-sm mb-4"></textarea>
-                    <button onclick="sendNotice()" class="w-full nagad-gradient text-white py-4 rounded-2xl font-bold shadow-xl">সবাইকে নোটিশ পাঠান</button>
+                    <h3 class="font-bold text-gray-800 mb-2 uppercase text-sm">Banner Slider</h3>
+                    <p class="text-[10px] text-gray-400 mb-6 font-bold uppercase italic">Upload from Gallery</p>
+                    <input type="file" id="file-input" accept="image/*" class="hidden" onchange="previewImage(event)">
+                    <div onclick="document.getElementById('file-input').click()" id="upload-preview" class="w-full h-40 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center cursor-pointer overflow-hidden mb-6">
+                        <i class="fas fa-cloud-upload-alt text-3xl text-gray-300"></i>
+                        <span class="text-xs text-gray-400 mt-2">ফাইল ম্যানেজার থেকে ছবি নিন</span>
+                    </div>
+                    <button id="upload-btn" onclick="uploadBannerAction()" class="w-full nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg opacity-50" disabled>UPLOAD BANNER</button>
+                </div>
+                <div id="banner-list" class="flex gap-4 overflow-x-auto pb-4 mt-6"></div>
+            </div>
+
+            <!-- Page: Notify -->
+            <div id="tab-notify" class="tab-page">
+                <div class="bg-white p-6 rounded-[35px] card-shadow text-center">
+                    <h3 class="font-bold text-gray-800 mb-4 uppercase">Notifications</h3>
+                    <textarea id="notif-text" rows="4" placeholder="মেসেজ লিখুন..." class="w-full bg-gray-50 p-5 rounded-3xl outline-none select-text border border-gray-100 text-sm mb-4"></textarea>
+                    <button onclick="sendNotice()" class="w-full nagad-gradient text-white py-4 rounded-2xl font-bold shadow-xl">SEND NOW</button>
                 </div>
             </div>
-
-            <!-- Page 5: Leaderboard -->
-            <div id="tab-leaderboard" class="tab-page">
-                <h3 class="font-bold text-gray-800 text-lg mb-4">পয়েন্টস টেবিল (Winner)</h3>
-                <div id="leader-list" class="space-y-4"></div>
-            </div>
-
         </main>
 
-        <!-- Bottom Tab Bar -->
         <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex justify-around p-4 z-[2000] rounded-t-[40px] shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
-            <button onclick="switchPage('home')" class="tab-icon text-red-600 flex flex-col items-center">
-                <i class="fas fa-home text-xl"></i><span class="text-[9px] mt-1 font-bold">হোম</span>
-            </button>
-            <button onclick="switchPage('matches')" class="tab-icon text-gray-300 flex flex-col items-center">
-                <i class="fas fa-trophy text-xl"></i><span class="text-[9px] mt-1 font-bold">ম্যাচ</span>
-            </button>
-            <button onclick="switchPage('verify')" class="tab-icon text-gray-300 flex flex-col items-center">
-                <i class="fas fa-check-shield text-xl"></i><span class="text-[9px] mt-1 font-bold">ভেরিফাই</span>
-            </button>
-            <button onclick="switchPage('banner')" class="tab-icon text-gray-300 flex flex-col items-center">
-                <i class="fas fa-images text-xl"></i><span class="text-[9px] mt-1 font-bold">ব্যানার</span>
-            </button>
+            <button onclick="switchPage('home')" class="text-red-600 flex flex-col items-center"><i class="fas fa-home text-xl"></i><span class="text-[9px] mt-1 font-bold">হোম</span></button>
+            <button onclick="switchPage('matches')" class="text-gray-300 flex flex-col items-center"><i class="fas fa-trophy text-xl"></i><span class="text-[9px] mt-1 font-bold">ম্যাচ</span></button>
+            <button onclick="switchPage('verify')" class="text-gray-300 flex flex-col items-center"><i class="fas fa-check-shield text-xl"></i><span class="text-[9px] mt-1 font-bold">ভেরিফাই</span></button>
+            <button onclick="switchPage('results')" class="text-gray-300 flex flex-col items-center"><i class="fas fa-poll-h text-xl"></i><span class="text-[9px] mt-1 font-bold">রেজাল্ট</span></button>
         </nav>
     </div>
 
-    <!-- MODAL: ADD MATCH (Timer/Countdown Support) -->
+    <!-- MODAL: ADD MATCH -->
     <div id="modal-add" class="fixed inset-0 bg-black/60 z-[10000] hidden items-center justify-center p-6 backdrop-blur-sm">
         <div class="bg-white w-full max-w-sm rounded-[45px] p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
-            <h3 class="text-xl font-bold mb-6 text-center text-red-600 uppercase tracking-widest">Setup New Match</h3>
+            <h3 class="text-xl font-bold mb-6 text-center text-red-600 uppercase">Match Details</h3>
             <form id="match-form" class="space-y-4">
-                <input type="text" name="title" placeholder="Match Title (Solo/Squad)" class="w-full bg-gray-50 p-4 rounded-2xl outline-none select-text border border-gray-100 font-bold" required>
+                <input type="text" name="title" placeholder="Match Title" class="w-full bg-gray-50 p-4 rounded-2xl outline-none font-bold select-text" required>
                 <div class="grid grid-cols-2 gap-3">
-                    <input type="number" name="fee" placeholder="Entry Fee ৳" class="bg-gray-50 p-4 rounded-2xl outline-none select-text border border-gray-100" required>
-                    <input type="number" name="prize" placeholder="Win Prize ৳" class="bg-gray-50 p-4 rounded-2xl outline-none select-text border border-gray-100" required>
+                    <input type="number" name="fee" placeholder="Fee ৳" class="bg-gray-50 p-4 rounded-2xl outline-none select-text" required>
+                    <input type="number" name="prize" placeholder="Prize ৳" class="bg-gray-50 p-4 rounded-2xl outline-none select-text" required>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <select name="map" class="bg-gray-50 p-4 rounded-2xl outline-none font-bold text-gray-500"><option value="Bermuda">Bermuda</option><option value="Purgatory">Purgatory</option></select>
                     <select name="type" class="bg-gray-50 p-4 rounded-2xl outline-none font-bold text-gray-500"><option value="Solo">Solo</option><option value="Squad">Squad</option></select>
                 </div>
-                <div>
-                    <label class="text-[10px] text-gray-400 font-bold ml-2">ROOM INFO RELEASE TIME</label>
-                    <input type="text" name="releaseTime" placeholder="উদা: 09:30 PM" class="w-full bg-gray-50 p-4 rounded-2xl outline-none select-text border border-gray-100" required>
-                </div>
+                <input type="text" name="releaseTime" placeholder="Release Time (9:30 PM)" class="w-full bg-gray-50 p-4 rounded-2xl outline-none select-text" required>
                 <div class="flex gap-3 pt-4">
                     <button type="button" onclick="closeModal('modal-add')" class="flex-1 bg-gray-100 py-4 rounded-2xl font-bold text-gray-400">EXIT</button>
                     <button type="submit" class="flex-[2] nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg">PUBLISH</button>
@@ -186,10 +182,10 @@
         </div>
     </div>
 
-    <!-- CORE ENGINE (FIREBASE) -->
+    <!-- CORE LOGIC & FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, doc, updateDoc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDUHOA9iEYJGpkuRWgjCg8L00sQpW-36sk",
@@ -204,176 +200,200 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- SECURITY ---
+        // Security PIN
         const MASTER_PIN = "yasin999";
-        let base64Banner = "";
+        let currentResultPlayers = [];
+        let base64Img = "";
 
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('loader').style.display = 'none';
-                if(localStorage.getItem('battle_admin_v2') === 'true') {
-                    showApp();
-                } else {
-                    document.getElementById('pin-screen').classList.remove('hidden');
-                }
-            }, 1800);
+                if(localStorage.getItem('admin_pro_v3') === 'true') showApp();
+                else document.getElementById('pin-screen').classList.remove('hidden');
+            }, 1500);
         });
 
         window.verifyPin = () => {
             if(document.getElementById('pin-input').value === MASTER_PIN) {
-                localStorage.setItem('battle_admin_v2', 'true');
+                localStorage.setItem('admin_pro_v3', 'true');
                 showApp();
-            } else {
-                alert("Incorrect PIN!");
-            }
+            } else alert("Invalid PIN!");
         };
 
         function showApp() {
             document.getElementById('pin-screen').classList.add('hidden');
             document.getElementById('main-dashboard').classList.remove('hidden');
-            runAdminEngine();
+            initEngine();
         }
 
-        window.exitAdmin = () => { localStorage.removeItem('battle_admin_v2'); location.reload(); };
+        window.exitAdmin = () => { localStorage.removeItem('admin_pro_v3'); location.reload(); };
 
-        // --- TAB SWITCHER ---
         window.switchPage = (id) => {
             document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active-tab'));
             document.getElementById('tab-'+id).classList.add('active-tab');
-            document.querySelectorAll('.tab-icon').forEach(i => i.classList.replace('text-red-600', 'text-gray-300'));
-            // Nav color update can be added here
         };
 
         window.openModal = (id) => document.getElementById(id).style.display = 'flex';
         window.closeModal = (id) => document.getElementById(id).style.display = 'none';
 
-        // --- GALLERY BANNER ENGINE ---
-        window.previewImage = (event) => {
-            const file = event.target.files[0];
-            const reader = new FileReader();
-            reader.onload = () => {
-                base64Banner = reader.result;
-                document.getElementById('upload-preview').innerHTML = `<img src="${reader.result}" class="w-full h-full object-cover">`;
-                const btn = document.getElementById('upload-btn');
-                btn.disabled = false;
-                btn.classList.remove('opacity-50', 'cursor-not-allowed');
-            };
-            reader.readAsDataURL(file);
-        };
-
-        window.uploadBannerAction = async () => {
-            if(!base64Banner) return;
-            await addDoc(collection(db, "banners"), { img: base64Banner, createdAt: new Date() });
-            alert("Banner Uploaded Successfully!");
-            document.getElementById('upload-preview').innerHTML = `<i class="fas fa-cloud-upload-alt text-3xl text-gray-300"></i><span class="text-xs text-gray-400 mt-2">ফাইল ম্যানেজার থেকে ছবি নিন</span>`;
-            document.getElementById('upload-btn').disabled = true;
-            document.getElementById('upload-btn').classList.add('opacity-50');
-        };
-
-        function loadBanners() {
-            onSnapshot(collection(db, "banners"), s => {
-                const list = document.getElementById('banner-list');
-                list.innerHTML = '';
-                s.forEach(d => {
-                    list.innerHTML += `<div class="relative flex-shrink-0"><img src="${d.data().img}" class="w-48 h-28 object-cover rounded-[30px] border-4 border-gray-50 shadow-md"><button onclick="delDoc('banners','${d.id}')" class="absolute -top-1 -right-1 bg-red-600 text-white w-7 h-7 rounded-full shadow-lg border-2 border-white text-xs">×</button></div>`;
-                });
-            });
-        }
-
-        // --- DATABASE SYNC ---
-        function runAdminEngine() {
+        // --- CORE FUNCTIONS ---
+        function initEngine() {
             syncStats();
             syncMatches();
             syncVerify();
-            loadBanners();
+            syncBanners();
+            loadMatchesForResult();
         }
 
         function syncStats() {
             onSnapshot(collection(db, "users"), s => document.getElementById('stat-users').innerText = s.size);
             onSnapshot(query(collection(db, "registrations"), where("status", "==", "approved")), s => {
-                let cash = 0; s.forEach(d => cash += Number(d.data().fee || 0));
-                document.getElementById('stat-money').innerText = cash.toFixed(2);
+                let total = 0; s.forEach(d => total += Number(d.data().fee || 0));
+                document.getElementById('stat-money').innerText = total.toFixed(2);
             });
         }
 
-        // MATCH LOGIC
-        document.getElementById('match-form').onsubmit = async (e) => {
-            e.preventDefault();
-            const f = e.target;
-            await addDoc(collection(db, "matches"), {
-                title: f.title.value, fee: f.fee.value, prize: f.prize.value,
-                map: f.map.value, type: f.type.value, releaseTime: f.releaseTime.value,
-                status: 'open', roomID: '', roomPass: '', createdAt: new Date().getTime()
+        // --- 1. RESULT MANAGER & AUTO POINT SYSTEM ---
+        const placementPoints = { 1: 15, 2: 12, 3: 10, 4: 8, 5: 6, 6: 4, 7: 2, 8: 1 }; // Default FF Points
+        const pointPerKill = 1;
+
+        function loadMatchesForResult() {
+            const select = document.getElementById('result-match-select');
+            onSnapshot(query(collection(db, "matches"), where("status", "==", "live")), s => {
+                select.innerHTML = '<option value="">ম্যাচ সিলেক্ট করুন</option>';
+                s.forEach(d => select.innerHTML += `<option value="${d.id}">${d.data().title}</option>`);
             });
-            closeModal('modal-add'); f.reset();
+        }
+
+        document.getElementById('result-match-select').onchange = (e) => {
+            if(e.target.value) {
+                document.getElementById('result-entry-form').classList.remove('hidden');
+                currentResultPlayers = [];
+                renderTempLeaderboard();
+            }
         };
 
+        window.addPlayerToResult = () => {
+            const name = document.getElementById('res-player').value;
+            const rank = parseInt(document.getElementById('res-rank').value);
+            const kills = parseInt(document.getElementById('res-kills').value);
+
+            if(!name || !rank) return alert("তথ্য পূরণ করুন");
+
+            const total = (placementPoints[rank] || 0) + (kills * pointPerKill);
+            currentResultPlayers.push({ name, rank, kills, total });
+            renderTempLeaderboard();
+            
+            document.getElementById('res-player').value = '';
+            document.getElementById('res-rank').value = '';
+            document.getElementById('res-kills').value = '';
+        };
+
+        function renderTempLeaderboard() {
+            const list = document.getElementById('temp-leader-list');
+            list.innerHTML = '';
+            currentResultPlayers.sort((a,b) => b.total - a.total).forEach(p => {
+                list.innerHTML += `<div class="bg-gray-100 p-2 rounded-lg text-[10px] flex justify-between font-bold"><span>#${p.rank} ${p.name}</span><span>${p.total} PTS</span></div>`;
+            });
+        }
+
+        window.publishFinalResult = async () => {
+            const matchId = document.getElementById('result-match-select').value;
+            if(currentResultPlayers.length === 0) return alert("লিডারবোর্ড খালি!");
+
+            const topWinner = currentResultPlayers.sort((a,b) => b.total - a.total)[0];
+
+            await addDoc(collection(db, "results"), {
+                matchId,
+                leaderboard: currentResultPlayers,
+                publishedAt: new Date().getTime()
+            });
+
+            await updateDoc(doc(db, "matches", matchId), { status: 'completed' });
+            
+            // Auto Notification
+            await addDoc(collection(db, "notifications"), {
+                msg: `Match result published! Winner: ${topWinner.name}`,
+                type: 'result',
+                createdAt: new Date().getTime()
+            });
+
+            alert("রেজাল্ট পাবলিশ হয়েছে এবং ম্যাচ লক করা হয়েছে!");
+            location.reload();
+        };
+
+        // --- 2. GALLERY BANNER SYSTEM ---
+        window.previewImage = (e) => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = () => {
+                base64Img = reader.result;
+                document.getElementById('upload-preview').innerHTML = `<img src="${base64Img}" class="w-full h-full object-cover">`;
+                document.getElementById('upload-btn').disabled = false;
+                document.getElementById('upload-btn').classList.remove('opacity-50');
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.uploadBannerAction = async () => {
+            await addDoc(collection(db, "banners"), { img: base64Img, createdAt: new Date() });
+            alert("Banner Live!");
+            location.reload();
+        };
+
+        function syncBanners() {
+            onSnapshot(collection(db, "banners"), s => {
+                const list = document.getElementById('banner-list'); list.innerHTML = '';
+                s.forEach(d => list.innerHTML += `<div class="relative flex-shrink-0"><img src="${d.data().img}" class="w-48 h-28 object-cover rounded-[30px] border-4 border-gray-50 shadow-md"><button onclick="delDoc('banners','${d.id}')" class="absolute -top-1 -right-1 bg-red-600 text-white w-7 h-7 rounded-full text-xs">×</button></div>`);
+            });
+        }
+
+        // --- 3. OTHER CORE TOOLS ---
+        window.sendNotice = async () => {
+            const msg = document.getElementById('notif-text').value;
+            await addDoc(collection(db, "notifications"), { msg, createdAt: new Date().getTime() });
+            alert("নোটিশ পাঠানো হয়েছে!");
+            document.getElementById('notif-text').value = '';
+        };
+
+        // Reuse syncMatches and syncVerify from previous stable build
         function syncMatches() {
             const list = document.getElementById('match-list');
             onSnapshot(query(collection(db, "matches"), orderBy("createdAt", "desc")), s => {
                 list.innerHTML = '';
                 s.forEach(d => {
-                    const data = d.data();
-                    list.innerHTML += `
-                        <div class="bg-white p-5 rounded-[35px] card-shadow border-l-[12px] border-red-600 flex justify-between items-center">
-                            <div>
-                                <h4 class="font-bold text-gray-800 text-sm uppercase">${data.title}</h4>
-                                <p class="text-[9px] text-gray-400 font-bold uppercase">Release: ${data.releaseTime} • Map: ${data.map}</p>
-                                <div class="mt-3 flex gap-2">
-                                    <button onclick="setMatchRoom('${d.id}')" class="bg-red-50 text-red-600 text-[9px] px-3 py-1.5 rounded-xl font-bold border border-red-100">ROOM ID</button>
-                                    <button onclick="delDoc('matches', '${d.id}')" class="bg-gray-50 text-gray-400 text-[9px] px-3 py-1.5 rounded-xl font-bold border border-gray-100">DELETE</button>
-                                </div>
-                            </div>
-                            <div class="text-right"><span class="bg-green-100 text-green-600 text-[9px] font-black px-3 py-1.5 rounded-full uppercase">${data.status}</span></div>
-                        </div>`;
+                    const m = d.data();
+                    list.innerHTML += `<div class="bg-white p-5 rounded-[35px] card-shadow border-l-[12px] border-red-600 flex justify-between items-center"><div><h4 class="font-bold text-gray-800 text-sm uppercase">${m.title}</h4><p class="text-[9px] text-gray-400 font-bold uppercase mt-1">${m.time} | Map: ${m.map}</p><div class="mt-3 flex gap-2"><button onclick="releaseRoom('${d.id}')" class="bg-red-50 text-red-600 text-[10px] px-3 py-1.5 rounded-xl font-bold border border-red-100 uppercase">Room ID</button><button onclick="delDoc('matches','${d.id}')" class="bg-gray-50 text-gray-400 text-[10px] px-3 py-1.5 rounded-xl font-bold uppercase">Delete</button></div></div><div class="bg-green-100 text-green-600 text-[9px] font-black px-3 py-1.5 rounded-full uppercase">${m.status}</div></div>`;
                 });
             });
         }
 
-        window.setMatchRoom = async (id) => {
+        window.releaseRoom = async (id) => {
             const rid = prompt("Room ID:"); const rps = prompt("Password:");
             if(rid && rps) await updateDoc(doc(db, "matches", id), { roomID: rid, roomPass: rps, status: 'live' });
         };
 
-        // VERIFICATION (Proof Support)
         function syncVerify() {
             const list = document.getElementById('verify-list');
-            const badge = document.getElementById('badge');
             onSnapshot(query(collection(db, "registrations"), where("status", "==", "pending")), s => {
                 list.innerHTML = '';
-                badge.innerText = s.size;
-                badge.style.display = s.size > 0 ? 'block' : 'none';
+                document.getElementById('badge').innerText = s.size;
+                document.getElementById('badge').style.display = s.size > 0 ? 'block' : 'none';
                 s.forEach(d => {
                     const r = d.data();
-                    list.innerHTML += `
-                        <div class="bg-white p-5 rounded-[35px] card-shadow border-l-[12px] border-orange-500">
-                            <div class="flex justify-between items-start mb-4">
-                                <div><h4 class="font-bold text-gray-800 text-xs">${r.playerName}</h4><p class="text-[9px] text-orange-600 font-bold uppercase">TrxID: ${r.trxID}</p></div>
-                                <div class="text-right font-black text-gray-400 text-[10px]">Match: ${r.matchTitle}</div>
-                            </div>
-                            ${r.proof ? `<div class="mb-4 rounded-2xl overflow-hidden border border-gray-100"><img src="${r.proof}" class="w-full max-h-40 object-cover"></div>` : ''}
-                            <div class="flex gap-2">
-                                <button onclick="actionVerify('${d.id}', 'approved')" class="flex-1 nagad-gradient text-white py-3 rounded-2xl font-bold text-xs shadow-md">APPROVE</button>
-                                <button onclick="delDoc('registrations', '${d.id}')" class="flex-1 bg-gray-100 text-gray-400 py-3 rounded-2xl font-bold text-xs">REJECT</button>
-                            </div>
-                        </div>`;
+                    list.innerHTML += `<div class="bg-white p-5 rounded-[35px] card-shadow border-l-[12px] border-orange-500"><div class="flex justify-between items-start mb-4"><div><h4 class="font-bold text-gray-800 uppercase text-xs">${r.playerName}</h4><p class="text-[10px] text-orange-600 font-bold uppercase">TrxID: ${r.trxID}</p></div><div class="text-right text-[10px] font-black text-gray-400">Match: ${r.matchTitle}</div></div>${r.proof ? `<div class="mb-4 rounded-2xl overflow-hidden border border-gray-100"><img src="${r.proof}" class="w-full max-h-40 object-cover"></div>` : ''}<div class="flex gap-2"><button onclick="updateDoc(doc(db,'registrations','${d.id}'),{status:'approved'})" class="flex-1 nagad-gradient text-white py-3 rounded-2xl font-bold text-xs shadow-md">APPROVE</button><button onclick="delDoc('registrations','${d.id}')" class="flex-1 bg-gray-100 text-gray-400 py-3 rounded-2xl font-bold text-xs">REJECT</button></div></div>`;
                 });
             });
         }
 
-        window.actionVerify = async (id, status) => await updateDoc(doc(db, "registrations", id), { status });
-
-        // NOTICE SYSTEM
-        window.sendNotice = async () => {
-            const msg = document.getElementById('notif-text').value;
-            if(!msg) return alert("Write something!");
-            await addDoc(collection(db, "notifications"), { msg, time: new Date().toLocaleString(), createdAt: new Date() });
-            alert("Notice Sent to All Players!");
-            document.getElementById('notif-text').value = '';
+        document.getElementById('match-form').onsubmit = async (e) => {
+            e.preventDefault(); const f = e.target;
+            await addDoc(collection(db, "matches"), { title: f.title.value, fee: f.fee.value, prize: f.prize.value, map: f.map.value, type: f.type.value, releaseTime: f.releaseTime.value, status: 'open', roomID: '', roomPass: '', createdAt: new Date().getTime() });
+            closeModal('modal-add'); f.reset();
         };
 
         window.delDoc = async (col, id) => { if(confirm("Are you sure?")) await deleteDoc(doc(db, col, id)); };
 
     </script>
 </body>
-                        </html>
+</html>
