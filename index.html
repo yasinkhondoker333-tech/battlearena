@@ -10,46 +10,28 @@
         @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap');
         :root { --nagad-red: #e61d2b; --nagad-orange: #f97316; }
         body { background-color: #f8fafc; font-family: 'Hind Siliguri', sans-serif; -webkit-tap-highlight-color: transparent; }
-        
-        /* UI Enhancements */
         * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
         input, textarea, .select-text { -webkit-user-select: text !important; user-select: text !important; }
         .nagad-gradient { background: linear-gradient(135deg, #e61d2b 0%, #ff4d4d 100%); }
         .card-shadow { box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        
-        /* Banner Slider */
         #banner-slider { display: flex; transition: transform 0.5s ease-in-out; }
         .banner-slide { min-width: 100%; height: 160px; border-radius: 30px; object-fit: cover; }
-
-        /* Loader */
         #loader { position: fixed; inset: 0; background: white; z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .ring { width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 4px solid var(--nagad-red); border-radius: 50%; animation: spin 1s infinite linear; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-
         .tab-page { display: none; animation: slideUp 0.4s ease; }
         .active-tab { display: block; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Winner Animation */
-        .winner-card { background: linear-gradient(135deg, #fff9c4 0%, #fffde7 100%); border: 2px solid #fbc02d; }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
-    <!-- 1. NEATIVE LOADER -->
-    <div id="loader">
-        <div class="ring"></div>
-        <p class="mt-4 font-bold text-red-600 tracking-widest text-[10px] uppercase">BattleArena Pro v3.0</p>
-    </div>
+    <div id="loader"><div class="ring"></div><p class="mt-4 font-bold text-red-600 tracking-widest text-[10px] uppercase font-sans">Connecting to BattleArena...</p></div>
 
-    <!-- 2. AUTH SCREEN -->
+    <!-- AUTH SCREEN -->
     <div id="auth-screen" class="hidden fixed inset-0 bg-white z-[9000] flex flex-col items-center justify-center p-8">
-        <div class="w-20 h-20 nagad-gradient rounded-[25px] flex items-center justify-center mb-6 shadow-xl">
-            <i class="fas fa-gamepad text-4xl text-white"></i>
-        </div>
+        <div class="w-20 h-20 nagad-gradient rounded-[25px] flex items-center justify-center mb-6 shadow-xl"><i class="fas fa-gamepad text-4xl text-white"></i></div>
         <h2 id="auth-title" class="text-2xl font-bold text-gray-800 mb-2">BattleArena Login</h2>
-        <p class="text-gray-400 text-xs mb-8 uppercase tracking-widest">Conquer the Battlefield</p>
-        
         <form onsubmit="handleAuth(event)" class="w-full max-w-sm space-y-4">
             <input type="email" id="auth-email" placeholder="ইমেইল এড্রেস" class="w-full bg-gray-50 p-4 rounded-2xl border border-gray-100 outline-none select-text" required>
             <input type="password" id="auth-pass" placeholder="পাসওয়ার্ড" class="w-full bg-gray-50 p-4 rounded-2xl border border-gray-100 outline-none select-text" required>
@@ -58,133 +40,121 @@
         <p onclick="toggleAuthMode()" id="auth-toggle" class="mt-6 text-sm text-red-600 font-bold cursor-pointer underline">নতুন অ্যাকাউন্ট তৈরি করুন</p>
     </div>
 
-    <!-- 3. MAIN APP AREA -->
-    <div id="app-body" class="hidden min-h-screen pb-28">
-        
-        <!-- NAGAD HEADER -->
+    <!-- MAIN APP AREA -->
+    <div id="app-body" class="hidden min-h-screen pb-32">
         <header class="nagad-gradient p-6 pb-28 text-white sticky top-0 z-50 rounded-b-[50px] shadow-2xl">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-3">
-                    <div id="user-initial" class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-xl font-bold border border-white/30">P</div>
-                    <div>
-                        <h2 class="font-bold text-lg leading-tight uppercase tracking-tighter" id="user-name-display">Player</h2>
-                        <p class="text-[10px] opacity-80 uppercase font-bold tracking-widest text-yellow-300">Pro Member</p>
-                    </div>
+                    <div id="user-initial" class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-xl font-bold border border-white/30 uppercase">U</div>
+                    <div><h2 class="font-bold text-lg leading-tight" id="user-name-display">Player</h2><p class="text-[10px] opacity-80 font-bold tracking-widest text-yellow-300">BALANCE ACTIVE</p></div>
                 </div>
-                <button onclick="logoutUser()" class="bg-white/10 w-10 h-10 rounded-2xl flex items-center justify-center border border-white/10 active:bg-red-800">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
+                <button onclick="logoutUser()" class="bg-white/10 w-10 h-10 rounded-2xl flex items-center justify-center border border-white/10"><i class="fas fa-sign-out-alt"></i></button>
             </div>
-            
             <div class="mt-8 flex justify-between items-end">
-                <div>
-                    <p class="text-[10px] uppercase font-bold opacity-60 mb-1">My Balance</p>
-                    <h3 class="text-3xl font-bold italic">৳ <span id="user-balance">0.00</span></h3>
-                </div>
-                <button onclick="switchPage('profile')" class="bg-yellow-400 text-red-700 px-4 py-1.5 rounded-full text-[10px] font-black uppercase shadow-lg">Add Money</button>
+                <div><p class="text-[10px] uppercase font-bold opacity-60 mb-1">My Balance</p><h3 class="text-3xl font-bold italic">৳ <span id="user-balance">0.00</span></h3></div>
+                <button onclick="openModal('modal-deposit')" class="bg-yellow-400 text-red-700 px-5 py-2 rounded-full text-[11px] font-black uppercase shadow-lg active:scale-90 transition">Add Money</button>
             </div>
         </header>
 
         <main class="px-5 -mt-16 relative z-[600]">
-            
-            <!-- AUTO BANNER SLIDER -->
-            <div class="bg-white rounded-[35px] p-2 card-shadow mb-6 overflow-hidden border border-gray-50">
-                <div id="banner-wrapper" class="overflow-hidden rounded-[30px]">
-                    <div id="banner-slider">
-                        <!-- Banners from Firebase -->
-                    </div>
-                </div>
-            </div>
+            <!-- Slider -->
+            <div class="bg-white rounded-[35px] p-2 card-shadow mb-6 border border-gray-50"><div id="banner-wrapper" class="overflow-hidden rounded-[30px]"><div id="banner-slider"></div></div></div>
 
-            <!-- TAB: HOME (Matches) -->
+            <!-- Home Tab -->
             <div id="tab-home" class="tab-page active-tab">
-                <div class="flex justify-between items-center mb-5 px-2">
-                    <h3 class="font-bold text-gray-800 text-lg">Active Tournaments</h3>
-                    <div class="w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
-                </div>
-                <div id="match-list" class="space-y-6">
-                    <!-- Matches Render -->
-                </div>
+                <h3 class="font-bold text-gray-800 text-lg mb-5 px-2">Active Matches</h3>
+                <div id="match-list" class="space-y-6"></div>
             </div>
 
-            <!-- TAB: MY MATCHES (Results & Leaderboard) -->
+            <!-- Joined Tab -->
             <div id="tab-joined" class="tab-page">
-                <h3 class="font-bold text-gray-800 text-lg mb-5 px-2 uppercase tracking-widest">Participated</h3>
+                <h3 class="font-bold text-gray-800 text-lg mb-5 px-2">My Participations</h3>
                 <div id="my-matches-list" class="space-y-4"></div>
             </div>
 
-            <!-- TAB: PROFILE & WALLET -->
-            <div id="tab-profile" class="tab-page text-center">
-                <div class="bg-white p-8 rounded-[40px] card-shadow border border-gray-50">
-                    <div class="w-20 h-20 nagad-gradient rounded-[30px] mx-auto mb-4 flex items-center justify-center text-3xl font-bold text-white shadow-xl">B</div>
-                    <h2 class="text-xl font-bold text-gray-800 uppercase" id="prof-name">Player Name</h2>
-                    <p class="text-xs text-gray-400 mb-6" id="prof-email">email@example.com</p>
+            <!-- Profile/Wallet Tab -->
+            <div id="tab-profile" class="tab-page">
+                <div class="bg-white p-8 rounded-[40px] card-shadow border border-gray-50 text-center">
+                    <div class="w-20 h-20 nagad-gradient rounded-[30px] mx-auto mb-4 flex items-center justify-center text-3xl font-bold text-white shadow-xl">BA</div>
+                    <h2 class="text-xl font-bold text-gray-800 uppercase" id="prof-name">User</h2>
+                    <p class="text-xs text-gray-400 mb-8" id="prof-email">email@example.com</p>
                     
-                    <div class="grid grid-cols-2 gap-3 mb-6">
-                        <div class="bg-gray-50 p-4 rounded-3xl">
-                            <p class="text-[9px] font-bold text-gray-400 uppercase">Referrals</p>
-                            <h4 class="font-bold text-red-600">0</h4>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded-3xl">
-                            <p class="text-[9px] font-bold text-gray-400 uppercase">Points</p>
-                            <h4 class="font-bold text-red-600">0</h4>
+                    <div class="grid grid-cols-1 gap-4 mb-6">
+                        <div class="bg-gray-50 p-6 rounded-[30px] border border-gray-100">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase">Available for Withdraw</p>
+                            <h4 class="text-3xl font-black text-red-600 mt-1">৳ <span id="user-balance-wallet">0.00</span></h4>
                         </div>
                     </div>
-                    <button class="w-full bg-gray-100 py-4 rounded-2xl font-bold text-gray-400 text-sm mb-3">Withdraw Wallet</button>
+                    <button onclick="openModal('modal-withdraw')" class="w-full nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg mb-4">WITHDRAW MONEY</button>
                     <button onclick="logoutUser()" class="w-full text-red-600 font-bold text-sm">Logout Account</button>
                 </div>
             </div>
         </main>
 
-        <!-- BOTTOM NAV -->
+        <!-- Bottom Navigation -->
         <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex justify-around p-4 z-[2000] rounded-t-[40px] shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
-            <button onclick="switchPage('home')" id="nav-home" class="nav-icon text-red-600 flex flex-col items-center">
-                <i class="fas fa-home text-xl"></i><span class="text-[9px] mt-1 font-bold">Home</span>
-            </button>
-            <button onclick="switchPage('joined')" id="nav-joined" class="nav-icon text-gray-300 flex flex-col items-center">
-                <i class="fas fa-trophy text-xl"></i><span class="text-[9px] mt-1 font-bold">Matches</span>
-            </button>
-            <button onclick="switchPage('profile')" id="nav-profile" class="nav-icon text-gray-300 flex flex-col items-center">
-                <i class="fas fa-user-circle text-xl"></i><span class="text-[9px] mt-1 font-bold">Profile</span>
-            </button>
+            <button onclick="switchPage('home')" id="nav-home" class="nav-icon text-red-600 flex flex-col items-center"><i class="fas fa-home text-xl"></i><span class="text-[9px] mt-1 font-bold">Home</span></button>
+            <button onclick="switchPage('joined')" id="nav-joined" class="nav-icon text-gray-300 flex flex-col items-center"><i class="fas fa-trophy text-xl"></i><span class="text-[9px] mt-1 font-bold">Joined</span></button>
+            <button onclick="switchPage('profile')" id="nav-profile" class="nav-icon text-gray-300 flex flex-col items-center"><i class="fas fa-wallet text-xl"></i><span class="text-[9px] mt-1 font-bold">Wallet</span></button>
         </nav>
     </div>
 
-    <!-- MODAL: JOIN MATCH -->
-    <div id="modal-join" class="fixed inset-0 bg-black/60 z-[10000] hidden items-center justify-center p-6 backdrop-blur-sm">
+    <!-- MODAL: ADD MONEY (DEPOSIT) -->
+    <div id="modal-deposit" class="fixed inset-0 bg-black/60 z-[10000] hidden items-center justify-center p-6 backdrop-blur-sm">
         <div class="bg-white w-full max-w-sm rounded-[45px] p-8 shadow-2xl text-center">
-            <h3 class="text-xl font-bold mb-2 text-red-600 uppercase tracking-widest">Confirm Entry</h3>
-            <p class="text-[11px] text-gray-500 mb-6 font-bold uppercase">Pay ৳<span id="pay-fee">0</span> to: 01777355727 (Nagad)</p>
-            <form id="join-form" class="space-y-4">
-                <input type="hidden" id="join-match-id">
-                <input type="text" id="join-pname" placeholder="Free Fire Nickname" class="w-full bg-gray-50 p-4 rounded-2xl outline-none select-text border border-gray-100 font-bold" required>
-                <input type="text" id="join-uid" placeholder="FF Game UID" class="w-full bg-gray-50 p-4 rounded-2xl outline-none select-text border border-gray-100 font-bold" required>
-                <input type="text" id="join-trx" placeholder="Transaction ID (TrxID)" class="w-full bg-gray-50 p-4 rounded-2xl outline-none select-text border border-gray-100 font-bold" required>
-                
+            <h3 class="text-xl font-bold text-red-600 uppercase mb-2">Add Money</h3>
+            <p class="text-[11px] text-gray-500 mb-6 font-bold uppercase">নগদ পার্সোনাল: 01777355727</p>
+            <form id="deposit-form" class="space-y-4">
+                <input type="number" id="dep-amount" placeholder="টাকার পরিমাণ (৳)" class="w-full bg-gray-50 p-4 rounded-2xl outline-none border border-gray-100 font-bold select-text" required>
+                <input type="text" id="dep-trx" placeholder="Transaction ID (TrxID)" class="w-full bg-gray-50 p-4 rounded-2xl outline-none border border-gray-100 font-bold select-text" required>
                 <div class="flex gap-3 pt-4">
-                    <button type="button" onclick="closeModal('modal-join')" class="flex-1 bg-gray-100 py-4 rounded-2xl font-bold text-gray-400">BACK</button>
-                    <button type="submit" class="flex-[2] nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg">JOIN NOW</button>
+                    <button type="button" onclick="closeModal('modal-deposit')" class="flex-1 bg-gray-100 py-4 rounded-2xl font-bold text-gray-400">BACK</button>
+                    <button type="submit" class="flex-[2] nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg">SUBMIT</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- NOTIFICATION POPUP -->
-    <div id="notif-modal" class="fixed top-10 left-6 right-6 bg-yellow-400 p-5 rounded-[30px] shadow-2xl z-[15000] hidden animate-bounce">
-        <div class="flex items-center gap-4">
-            <i class="fas fa-bullhorn text-2xl text-red-700"></i>
-            <div>
-                <h4 class="font-black text-red-800 text-xs uppercase">Breaking News!</h4>
-                <p id="notif-msg" class="text-[11px] text-red-900 font-bold leading-tight mt-1"></p>
-            </div>
-            <button onclick="this.parentElement.parentElement.style.display='none'" class="ml-auto text-red-900"><i class="fas fa-times-circle"></i></button>
+    <!-- MODAL: WITHDRAW -->
+    <div id="modal-withdraw" class="fixed inset-0 bg-black/60 z-[10000] hidden items-center justify-center p-6 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-sm rounded-[45px] p-8 shadow-2xl text-center">
+            <h3 class="text-xl font-bold text-gray-800 uppercase mb-2">Withdraw</h3>
+            <p class="text-[10px] text-gray-400 mb-6 font-bold">মিনিমাম উইথড্র ৳৫০</p>
+            <form id="withdraw-form" class="space-y-4">
+                <input type="number" id="wit-amount" placeholder="টাকার পরিমাণ (৳)" class="w-full bg-gray-50 p-4 rounded-2xl border border-gray-100 outline-none font-bold select-text" required>
+                <input type="text" id="wit-num" placeholder="নগদ নম্বর" class="w-full bg-gray-50 p-4 rounded-2xl border border-gray-100 outline-none font-bold select-text" required>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closeModal('modal-withdraw')" class="flex-1 bg-gray-100 py-4 rounded-2xl font-bold text-gray-400">CANCEL</button>
+                    <button type="submit" class="flex-[2] nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg">REQUEST</button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- FIREBASE SYSTEM -->
+    <!-- MODAL: JOIN MATCH -->
+    <div id="modal-join" class="fixed inset-0 bg-black/60 z-[10000] hidden items-center justify-center p-6 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-sm rounded-[45px] p-8 shadow-2xl text-center">
+            <h3 class="text-xl font-bold text-red-600 mb-6 uppercase">Join Tournament</h3>
+            <p class="text-[12px] font-bold text-gray-800 mb-4 uppercase italic">Entry Fee: ৳<span id="pay-fee">0</span></p>
+            <div id="wallet-option" class="mb-4 bg-green-50 p-4 rounded-3xl border border-green-100">
+                <p class="text-[10px] font-bold text-green-600 uppercase">Your Balance: ৳<span id="can-pay">0.00</span></p>
+                <button id="join-wallet-btn" class="mt-2 text-xs font-black text-red-600 underline uppercase">Use Wallet Balance</button>
+            </div>
+            <div class="text-gray-300 text-[10px] mb-4">--- OR PAY MANUALLY ---</div>
+            <form id="join-form" class="space-y-3">
+                <input type="hidden" id="join-match-id">
+                <input type="text" id="join-pname" placeholder="Game Name" class="w-full bg-gray-50 p-3 rounded-xl outline-none select-text border border-gray-100" required>
+                <input type="text" id="join-uid" placeholder="FF UID" class="w-full bg-gray-50 p-3 rounded-xl outline-none select-text border border-gray-100" required>
+                <input type="text" id="join-trx" placeholder="TrxID (After manual pay)" class="w-full bg-gray-50 p-3 rounded-xl outline-none select-text border border-gray-100" required>
+                <button type="submit" class="w-full nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg mt-2">CONFIRM JOIN</button>
+            </form>
+            <button onclick="closeModal('modal-join')" class="mt-4 text-xs text-gray-400 font-bold uppercase">Back</button>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, doc, getDoc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
@@ -201,8 +171,8 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
         let currentUser = null;
+        let userData = { balance: 0 };
 
-        // --- AUTH & INITIALIZATION ---
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('loader').style.display = 'none';
@@ -229,224 +199,139 @@
                 if(isLogin) await signInWithEmailAndPassword(auth, email, pass);
                 else {
                     const res = await createUserWithEmailAndPassword(auth, email, pass);
-                    // Create user doc
-                    await addDoc(collection(db, "users"), { uid: res.user.uid, email: email, balance: 0, createdAt: new Date() });
+                    await setDoc(doc(db, "users", res.user.uid), { email: email, balance: 0, createdAt: new Date() });
                 }
             } catch (err) { alert(err.message); }
         };
 
-        window.toggleAuthMode = () => {
-            const btn = document.getElementById('auth-btn');
-            const toggle = document.getElementById('auth-toggle');
-            if(btn.innerText === 'লগ ইন') {
-                btn.innerText = 'সাইন আপ';
-                toggle.innerText = 'আগের অ্যাকাউন্টে লগ ইন করুন';
-            } else {
-                btn.innerText = 'লগ ইন';
-                toggle.innerText = 'নতুন অ্যাকাউন্ট তৈরি করুন';
-            }
-        };
-
-        window.logoutUser = () => signOut(auth);
-
-        // --- TAB & UI ENGINE ---
-        window.switchPage = (id) => {
-            document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active-tab'));
-            document.getElementById('tab-'+id).classList.add('active-tab');
-            document.querySelectorAll('.nav-icon').forEach(n => n.classList.replace('text-red-600', 'text-gray-300'));
-            document.getElementById('nav-'+id).classList.replace('text-gray-300', 'text-red-600');
-        };
-
-        window.openModal = (id) => document.getElementById(id).style.display = 'flex';
-        window.closeModal = (id) => document.getElementById(id).style.display = 'none';
-
-        // --- CORE PLAYER ENGINE ---
         function initPlayerEngine() {
             syncUserData();
             syncBanners();
             syncMatches();
             syncMyParticipations();
-            syncNotifications();
         }
 
         function syncUserData() {
-            // Mock balance sync (since direct wallet depends on your admin strategy)
-            document.getElementById('prof-email').innerText = currentUser.email;
-            document.getElementById('user-name-display').innerText = currentUser.email.split('@')[0];
-            document.getElementById('prof-name').innerText = currentUser.email.split('@')[0];
-            document.getElementById('user-initial').innerText = currentUser.email[0].toUpperCase();
-        }
-
-        // --- BANNER SLIDER LOGIC ---
-        function syncBanners() {
-            const slider = document.getElementById('banner-slider');
-            onSnapshot(collection(db, "banners"), snap => {
-                slider.innerHTML = '';
-                if(snap.empty) {
-                    slider.innerHTML = `<img src="https://via.placeholder.com/600x250/e61d2b/ffffff?text=BattleArena+Live" class="banner-slide">`;
-                    return;
+            onSnapshot(doc(db, "users", currentUser.uid), d => {
+                if(d.exists()) {
+                    userData = d.data();
+                    const bal = parseFloat(userData.balance || 0).toFixed(2);
+                    document.getElementById('user-balance').innerText = bal;
+                    document.getElementById('user-balance-wallet').innerText = bal;
+                    document.getElementById('can-pay').innerText = bal;
+                    document.getElementById('user-name-display').innerText = userData.email.split('@')[0];
+                    document.getElementById('prof-name').innerText = userData.email.split('@')[0];
+                    document.getElementById('prof-email').innerText = userData.email;
+                    document.getElementById('user-initial').innerText = userData.email[0];
                 }
-                snap.forEach(d => {
-                    slider.innerHTML += `<img src="${d.data().img}" class="banner-slide">`;
-                });
-                startSlider(snap.size);
             });
         }
 
-        let slideIndex = 0;
-        function startSlider(count) {
-            if(count <= 1) return;
-            setInterval(() => {
-                slideIndex++;
-                if(slideIndex >= count) slideIndex = 0;
-                document.getElementById('banner-slider').style.transform = `translateX(-${slideIndex * 100}%)`;
-            }, 4000);
+        // --- WALLET LOGIC ---
+        document.getElementById('deposit-form').onsubmit = async (e) => {
+            e.preventDefault();
+            await addDoc(collection(db, "wallet_requests"), {
+                uid: currentUser.uid,
+                email: currentUser.email,
+                amount: document.getElementById('dep-amount').value,
+                trxID: document.getElementById('dep-trx').value,
+                type: 'deposit',
+                status: 'pending',
+                timestamp: new Date().getTime()
+            });
+            alert("টাকা জমা দেওয়ার রিকোয়েস্ট পাঠানো হয়েছে। এডমিন চেক করে ব্যালেন্স যোগ করে দিবে।");
+            closeModal('modal-deposit');
+        };
+
+        document.getElementById('withdraw-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const amt = parseFloat(document.getElementById('wit-amount').value);
+            if(amt > userData.balance) return alert("পর্যাপ্ত ব্যালেন্স নেই!");
+            if(amt < 50) return alert("মিনিমাম ৫০ টাকা উইথড্র করা যাবে।");
+
+            await addDoc(collection(db, "wallet_requests"), {
+                uid: currentUser.uid,
+                email: currentUser.email,
+                amount: amt,
+                number: document.getElementById('wit-num').value,
+                type: 'withdraw',
+                status: 'pending',
+                timestamp: new Date().getTime()
+            });
+            // Deduct balance temporarily
+            await updateDoc(doc(db, "users", currentUser.uid), { balance: userData.balance - amt });
+            alert("উইথড্র রিকোয়েস্ট পাঠানো হয়েছে। ২৪ ঘন্টার মধ্যে টাকা পেয়ে যাবেন।");
+            closeModal('modal-withdraw');
+        };
+
+        // --- MATCHES & JOIN ---
+        window.setupJoin = (id, fee) => {
+            document.getElementById('join-match-id').value = id;
+            document.getElementById('pay-fee').innerText = fee;
+            document.getElementById('join-wallet-btn').onclick = () => joinWithWallet(id, fee);
+            openModal('modal-join');
+        };
+
+        async function joinWithWallet(matchId, fee) {
+            if(userData.balance < fee) return alert("ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই। আগে এড মানি করুন।");
+            if(!confirm("ওয়ালেট থেকে ৳"+fee+" কেটে নেওয়া হবে। জয়েন করবেন?")) return;
+
+            const pname = prompt("গেমের নাম দিন:");
+            const puid = prompt("গেম আইডি (UID) দিন:");
+            if(!pname || !puid) return alert("তথ্য দিন!");
+
+            await addDoc(collection(db, "registrations"), {
+                uid: currentUser.uid, matchID: matchId, playerName: pname, gameID: puid, trxID: 'WALLET_PAY', fee: fee, status: 'approved', timestamp: new Date().getTime()
+            });
+            await updateDoc(doc(db, "users", currentUser.uid), { balance: userData.balance - fee });
+            alert("সফলভাবে টুর্নামেন্টে জয়েন করেছেন!");
+            closeModal('modal-join');
         }
 
-        // --- MATCHES ENGINE ---
+        // --- Standard Sync functions ---
+        function syncBanners() {
+            const s = document.getElementById('banner-slider');
+            onSnapshot(collection(db, "banners"), snap => {
+                s.innerHTML = '';
+                if(snap.empty) s.innerHTML = `<img src="https://via.placeholder.com/600x250/e61d2b/ffffff?text=BattleArena+Live" class="banner-slide">`;
+                snap.forEach(d => s.innerHTML += `<img src="${d.data().img}" class="banner-slide">`);
+                let i = 0; setInterval(() => { i++; if(i >= snap.size) i=0; s.style.transform = `translateX(-${i*100}%)`; }, 4000);
+            });
+        }
+
         function syncMatches() {
             const list = document.getElementById('match-list');
             onSnapshot(query(collection(db, "matches"), where("status", "!=", "completed"), orderBy("status", "desc")), snap => {
                 list.innerHTML = '';
                 snap.forEach(d => {
                     const m = d.data();
-                    list.innerHTML += `
-                        <div class="bg-white p-6 rounded-[40px] card-shadow border border-gray-50 overflow-hidden relative">
-                            <div class="flex justify-between items-start mb-4">
-                                <span class="bg-red-50 text-red-600 text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-widest">${m.map} | ${m.type}</span>
-                                <span class="text-[10px] font-black text-gray-300 uppercase">${m.releaseTime}</span>
-                            </div>
-                            <h3 class="text-xl font-bold text-gray-800 uppercase mb-5">${m.title}</h3>
-                            <div class="grid grid-cols-3 gap-2 mb-6">
-                                <div class="bg-gray-50 p-3 rounded-3xl text-center">
-                                    <p class="text-[8px] text-gray-400 font-bold uppercase">Prize</p>
-                                    <p class="text-sm font-black text-green-600">৳${m.prize}</p>
-                                </div>
-                                <div class="bg-gray-50 p-3 rounded-3xl text-center border-x border-white">
-                                    <p class="text-[8px] text-gray-400 font-bold uppercase">Entry</p>
-                                    <p class="text-sm font-black text-red-600">৳${m.fee}</p>
-                                </div>
-                                <div class="bg-gray-50 p-3 rounded-3xl text-center">
-                                    <p class="text-[8px] text-gray-400 font-bold uppercase">Status</p>
-                                    <p class="text-sm font-black text-blue-600 uppercase tracking-tighter">${m.status}</p>
-                                </div>
-                            </div>
-                            <button onclick="setupJoin('${d.id}', '${m.fee}')" class="w-full nagad-gradient text-white py-4 rounded-3xl font-bold shadow-lg active:scale-95 transition uppercase text-xs tracking-widest">Join Tournament</button>
-                        </div>`;
+                    list.innerHTML += `<div class="bg-white p-6 rounded-[40px] card-shadow border border-gray-50 overflow-hidden relative"><div class="flex justify-between items-start mb-4"><span class="bg-red-50 text-red-600 text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-widest">${m.map} | ${m.type}</span><span class="text-[10px] font-black text-gray-300 uppercase">${m.releaseTime}</span></div><h3 class="text-xl font-bold text-gray-800 uppercase mb-5">${m.title}</h3><div class="grid grid-cols-3 gap-2 mb-6"><div class="bg-gray-50 p-3 rounded-3xl text-center"><p class="text-[8px] text-gray-400 font-bold uppercase">Prize</p><p class="text-sm font-black text-green-600">৳${m.prize}</p></div><div class="bg-gray-50 p-3 rounded-3xl text-center"><p class="text-[8px] text-gray-400 font-bold uppercase">Entry</p><p class="text-sm font-black text-red-600">৳${m.fee}</p></div><div class="bg-gray-50 p-3 rounded-3xl text-center"><p class="text-[8px] text-gray-400 font-bold uppercase">Status</p><p class="text-sm font-black text-blue-600 uppercase">${m.status}</p></div></div><button onclick="setupJoin('${d.id}', ${m.fee})" class="w-full nagad-gradient text-white py-4 rounded-3xl font-bold shadow-lg uppercase text-xs tracking-widest">Join Tournament</button></div>`;
                 });
             });
         }
 
-        window.setupJoin = (id, fee) => {
-            document.getElementById('join-match-id').value = id;
-            document.getElementById('pay-fee').innerText = fee;
-            openModal('modal-join');
-        };
-
-        document.getElementById('join-form').onsubmit = async (e) => {
-            e.preventDefault();
-            const data = {
-                uid: currentUser.uid,
-                matchID: document.getElementById('join-match-id').value,
-                playerName: document.getElementById('join-pname').value,
-                gameID: document.getElementById('join-uid').value,
-                trxID: document.getElementById('join-trx').value,
-                fee: document.getElementById('pay-fee').innerText,
-                status: 'pending',
-                timestamp: new Date().getTime()
-            };
-            await addDoc(collection(db, "registrations"), data);
-            alert("Join Request Sent! Wait for approval.");
-            closeModal('modal-join');
-        };
-
-        // --- RESULTS & LEADERBOARD SYSTEM ---
         function syncMyParticipations() {
             const list = document.getElementById('my-matches-list');
             onSnapshot(query(collection(db, "registrations"), where("uid", "==", currentUser.uid)), async snap => {
                 list.innerHTML = '';
-                if(snap.empty) list.innerHTML = `<p class="text-center text-gray-400 text-xs mt-10">You haven't joined any matches yet.</p>`;
-                
-                for (const regDoc of snap.docs) {
-                    const r = regDoc.data();
-                    const matchSnap = await getDoc(doc(db, "matches", r.matchID));
-                    const m = matchSnap.data();
-                    
-                    let statusBox = `<div class="mt-3 bg-orange-50 text-orange-600 text-[10px] p-3 rounded-2xl font-bold text-center">WAITING FOR APPROVAL</div>`;
-                    
+                for(let d of snap.docs) {
+                    const r = d.data(); const mSnap = await getDoc(doc(db, "matches", r.matchID));
+                    const m = mSnap.data();
+                    let sb = `<div class="mt-3 bg-orange-50 text-orange-600 text-[10px] p-3 rounded-2xl font-bold text-center">WAITING APPROVAL</div>`;
                     if(r.status === 'approved') {
-                        if(m.status === 'live') {
-                            statusBox = `
-                                <div class="mt-3 bg-green-50 p-4 rounded-[30px] border-2 border-dashed border-green-200">
-                                    <p class="text-[9px] text-green-600 font-black uppercase text-center mb-1">Room ID & Password</p>
-                                    <div class="flex justify-around text-sm font-mono font-bold text-gray-800">
-                                        <span class="select-text">ID: ${m.roomID}</span>
-                                        <span class="select-text">PS: ${m.roomPass}</span>
-                                    </div>
-                                </div>`;
-                        } else if(m.status === 'completed') {
-                            statusBox = `<button onclick="loadLeaderboard('${r.matchID}')" class="mt-3 w-full bg-purple-600 text-white py-3 rounded-2xl font-bold text-[10px] uppercase">View Leaderboard & Points</button>`;
-                        } else {
-                            statusBox = `<div class="mt-3 bg-blue-50 text-blue-600 text-[10px] p-3 rounded-2xl font-bold text-center">APPROVED! WAIT FOR ROOM INFO</div>`;
-                        }
+                        if(m.status === 'live') sb = `<div class="mt-3 bg-green-50 p-4 rounded-[30px] border-2 border-dashed border-green-200 text-center font-mono font-bold text-sm">ID: ${m.roomID} | PS: ${m.roomPass}</div>`;
+                        else sb = `<div class="mt-3 bg-blue-50 text-blue-600 text-[10px] p-3 rounded-2xl font-bold text-center uppercase tracking-widest font-black italic">Wait for Room Info</div>`;
                     }
-
-                    list.innerHTML += `
-                        <div class="bg-white p-5 rounded-[40px] card-shadow border border-gray-50">
-                            <h4 class="font-bold text-gray-800 text-sm uppercase">${m.title}</h4>
-                            <p class="text-[9px] text-gray-400 font-bold uppercase mt-1">Player: ${r.playerName}</p>
-                            ${statusBox}
-                        </div>`;
+                    list.innerHTML += `<div class="bg-white p-5 rounded-[40px] card-shadow border border-gray-50"><h4 class="font-bold text-gray-800 text-sm uppercase">${m.title}</h4><p class="text-[9px] text-gray-400 font-bold uppercase mt-1">Player: ${r.playerName}</p>${sb}</div>`;
                 }
             });
         }
 
-        window.loadLeaderboard = async (matchId) => {
-            const resultQuery = query(collection(db, "results"), where("matchId", "==", matchId));
-            const snap = await getDocs(resultQuery);
-            if(snap.empty) return alert("Result coming soon...");
-            
-            const data = snap.docs[0].data();
-            let table = `<div class="fixed inset-0 bg-white z-[20000] p-6 overflow-y-auto">
-                <button onclick="this.parentElement.remove()" class="mb-6 text-red-600 font-bold"><i class="fas fa-arrow-left mr-2"></i> Go Back</button>
-                <h3 class="text-xl font-black text-center mb-8 uppercase tracking-widest text-red-600">Leaderboard</h3>
-                <div class="space-y-3">`;
-            
-            data.leaderboard.sort((a,b) => b.total - a.total).forEach((p, index) => {
-                const isWinner = index === 0;
-                table += `
-                    <div class="p-5 rounded-[30px] flex justify-between items-center ${isWinner ? 'winner-card shadow-lg shadow-yellow-200 border-2' : 'bg-gray-50'}">
-                        <div class="flex items-center gap-4">
-                            <span class="text-lg font-black ${isWinner ? 'text-yellow-700' : 'text-gray-300'}">#${p.rank}</span>
-                            <div>
-                                <h4 class="font-bold text-gray-800 text-sm uppercase">${p.name} ${isWinner ? '👑' : ''}</h4>
-                                <p class="text-[9px] text-gray-400 font-bold uppercase">Kills: ${p.kills}</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-xs font-black text-red-600">${p.total} PTS</p>
-                        </div>
-                    </div>`;
-            });
-            table += `</div></div>`;
-            document.body.insertAdjacentHTML('beforeend', table);
-        };
-
-        // --- NOTIFICATION SYSTEM ---
-        function syncNotifications() {
-            const modal = document.getElementById('notif-modal');
-            const msgEl = document.getElementById('notif-msg');
-            onSnapshot(query(collection(db, "notifications"), orderBy("createdAt", "desc")), snap => {
-                if(!snap.empty) {
-                    const latest = snap.docs[0].data();
-                    msgEl.innerText = latest.msg;
-                    modal.classList.remove('hidden');
-                    // Hide after 8 seconds
-                    setTimeout(() => modal.classList.add('hidden'), 8000);
-                }
-            });
-        }
-
+        window.toggleAuthMode = () => { const b = document.getElementById('auth-btn'); b.innerText = b.innerText === 'লগ ইন' ? 'সাইন আপ' : 'লগ ইন'; };
+        window.switchPage = (id) => { document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active-tab')); document.getElementById('tab-'+id).classList.add('active-tab'); document.querySelectorAll('.nav-icon').forEach(n => n.classList.replace('text-red-600', 'text-gray-300')); document.getElementById('nav-'+id).classList.replace('text-gray-300', 'text-red-600'); };
+        window.openModal = (id) => document.getElementById(id).classList.remove('hidden');
+        window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
+        window.logoutUser = () => signOut(auth);
     </script>
 </body>
-                </html>
+    </html>
