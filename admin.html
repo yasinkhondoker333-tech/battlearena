@@ -3,191 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BattleArena Pro Admin</title>
+    <title>BattleArena Pro Admin - Control Center</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap');
         :root { --nagad-red: #e61d2b; --nagad-orange: #f97316; }
-        body { background-color: #ffffff; font-family: 'Hind Siliguri', sans-serif; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        body { background-color: #f8fafc; font-family: 'Hind Siliguri', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        /* Security Controls */
+        /* Advanced Security & UI */
         * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
         input, textarea, .select-text { -webkit-user-select: text !important; user-select: text !important; }
 
         .nagad-gradient { background: linear-gradient(135deg, #e61d2b 0%, #ff4d4d 100%); }
-        .card-shadow { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-        .grid-icon { width: 55px; height: 55px; border-radius: 18px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; font-size: 1.4rem; transition: 0.2s; }
+        .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05); }
+        .grid-icon { width: 52px; height: 52px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; font-size: 1.3rem; transition: 0.3s; }
         .grid-icon:active { transform: scale(0.9); }
 
-        /* Smooth Page Transitions */
-        .page-active { display: block !important; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* PIN Input Style */
-        .pin-dot { width: 15px; height: 15px; border-radius: 50%; border: 2px solid #ddd; display: inline-block; margin: 0 5px; }
-        .pin-dot.filled { background: var(--nagad-red); border-color: var(--nagad-red); }
+        /* Super Smooth Loader */
+        #loader-screen { position: fixed; inset: 0; background: white; z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .loader-ring { width: 50px; height: 50px; border: 4px solid #f3f3f3; border-top: 4px solid var(--nagad-red); border-radius: 50%; animation: spin 1s infinite linear; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        
+        .page-active { display: block !important; animation: slideUp 0.4s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Tab Navigation Active */
+        .tab-btn.active { color: var(--nagad-red) !important; font-weight: bold; }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
-    <!-- PIN SECURITY SCREEN -->
-    <div id="pin-screen" class="fixed inset-0 bg-white z-[1000] flex flex-col items-center justify-center p-8">
-        <img src="https://cdn-icons-png.flaticon.com/512/3064/3064155.png" class="w-20 mb-6" alt="Lock">
-        <h2 class="text-2xl font-bold text-gray-800 mb-1">BattleArena Admin</h2>
-        <p class="text-gray-400 text-sm mb-10">প্রবেশ করতে আপনার গোপন পিন দিন</p>
-        
-        <div class="mb-10 flex gap-3">
-            <input type="password" id="admin-pin" maxlength="8" placeholder="••••••" 
-                class="w-full bg-gray-50 p-5 rounded-3xl text-center text-3xl tracking-[15px] border-2 border-gray-100 focus:border-red-500 outline-none transition-all shadow-inner">
-        </div>
-
-        <button onclick="verifyAccess()" class="w-full max-w-xs nagad-gradient text-white py-4 rounded-2xl font-bold shadow-xl active:scale-95 transition uppercase tracking-widest">
-            Access Dashboard
-        </button>
-        <p id="pin-error" class="text-red-500 text-xs mt-4 hidden">ভুল পিন! আবার চেষ্টা করুন।</p>
+    <!-- 1. ADVANCED LOADER -->
+    <div id="loader-screen">
+        <div class="loader-ring"></div>
+        <img src="https://cdn-icons-png.flaticon.com/512/8002/8002150.png" class="w-16 mt-6 opacity-20">
+        <p class="mt-4 font-bold text-red-600 tracking-widest text-[10px] uppercase">BattleArena Engine Loading...</p>
     </div>
 
-    <!-- MAIN DASHBOARD APP -->
-    <div id="app-body" class="hidden min-h-screen pb-28">
+    <!-- 2. PIN SECURITY SCREEN (yasin999) -->
+    <div id="pin-screen" class="fixed inset-0 bg-white z-[9000] hidden flex flex-col items-center justify-center p-8">
+        <div class="w-16 h-16 bg-red-50 rounded-3xl flex items-center justify-center mb-6">
+            <i class="fas fa-shield-alt text-3xl text-red-600"></i>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800">BattleArena Admin</h2>
+        <p class="text-gray-400 text-xs mb-10 tracking-widest uppercase">Master Security Check</p>
         
-        <!-- Header Section (Nagad Style) -->
-        <header class="nagad-gradient p-6 pb-28 text-white sticky top-0 z-50 rounded-b-[45px] card-shadow">
+        <input type="password" id="admin-pin-input" maxlength="8" placeholder="••••••" 
+            class="w-full max-w-xs bg-gray-50 p-5 rounded-[30px] text-center text-3xl tracking-[15px] border-2 border-gray-50 focus:border-red-500 outline-none transition-all shadow-inner mb-8">
+
+        <button onclick="verifyAdmin()" class="w-full max-w-xs nagad-gradient text-white py-5 rounded-[30px] font-bold shadow-xl active:scale-95 transition uppercase text-sm tracking-widest">
+            Login to Dashboard
+        </button>
+        <p id="error-msg" class="text-red-500 text-xs mt-4 font-bold hidden">PIN incorrect! Access Denied.</p>
+    </div>
+
+    <!-- 3. MAIN DASHBOARD CONTENT -->
+    <div id="app-content" class="hidden min-h-screen pb-32">
+        
+        <!-- Premium Header -->
+        <header class="nagad-gradient p-6 pb-28 text-white sticky top-0 z-[500] rounded-b-[50px] shadow-2xl">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-xl font-bold border border-white/30 shadow-lg">Y</div>
+                    <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-xl font-bold border border-white/30">Y</div>
                     <div>
-                        <h2 class="font-bold text-lg leading-tight">Yasin Admin</h2>
-                        <p class="text-[10px] opacity-80 uppercase tracking-widest font-bold">Master Control Center</p>
+                        <h2 class="font-bold text-lg leading-tight">Yasin Khondoker</h2>
+                        <p class="text-[10px] opacity-80 uppercase font-bold tracking-widest">Global Master Admin</p>
                     </div>
                 </div>
-                <button onclick="exitAdmin()" class="bg-white/10 w-10 h-10 rounded-full flex items-center justify-center border border-white/20 active:bg-red-700">
-                    <i class="fas fa-power-off text-sm"></i>
+                <button onclick="logoutAdmin()" class="bg-white/10 w-10 h-10 rounded-2xl flex items-center justify-center active:bg-red-800 border border-white/10">
+                    <i class="fas fa-power-off"></i>
                 </button>
             </div>
 
-            <!-- Dashboard Realtime Stats -->
-            <div class="grid grid-cols-2 gap-4 mt-10">
-                <div class="bg-white/10 backdrop-blur-md p-5 rounded-[30px] border border-white/10 shadow-sm">
-                    <p class="text-[10px] uppercase font-bold opacity-70 mb-1">Today Income</p>
-                    <h3 class="text-2xl font-bold italic font-sans text-yellow-300">৳ <span id="stat-income">0.00</span></h3>
+            <!-- Dashboard Stats -->
+            <div class="grid grid-cols-2 gap-4 mt-8">
+                <div class="bg-white/10 backdrop-blur-xl p-4 rounded-[30px] border border-white/20">
+                    <p class="text-[9px] uppercase font-bold opacity-60 mb-1">Match Earnings</p>
+                    <h3 class="text-xl font-bold font-sans">৳ <span id="stat-money">0.00</span></h3>
                 </div>
-                <div class="bg-white/10 backdrop-blur-md p-5 rounded-[30px] border border-white/10 shadow-sm">
-                    <p class="text-[10px] uppercase font-bold opacity-70 mb-1">Total Users</p>
-                    <h3 class="text-2xl font-bold italic font-sans" id="stat-users">0</h3>
+                <div class="bg-white/10 backdrop-blur-xl p-4 rounded-[30px] border border-white/20">
+                    <p class="text-[9px] uppercase font-bold opacity-60 mb-1">Total Players</p>
+                    <h3 class="text-xl font-bold font-sans" id="stat-total-users">0</h3>
                 </div>
             </div>
         </header>
 
-        <!-- Dynamic Content Area -->
-        <main class="px-5 -mt-16 relative z-[60]">
+        <main class="px-5 -mt-16 relative z-[600]">
             
-            <!-- HOME GRID (Nagad Style) -->
-            <div id="home-tab" class="page-content bg-white rounded-[35px] p-8 card-shadow grid grid-cols-3 gap-y-10 gap-x-4 text-center mb-8">
-                <div onclick="showPage('matches')" class="flex flex-col items-center">
+            <!-- NAGAD STYLE GRID MENU -->
+            <div id="tab-home" class="page-content bg-white rounded-[40px] p-8 card-shadow grid grid-cols-3 gap-y-12 gap-x-4 text-center mb-8">
+                <div onclick="openPage('matches')" class="flex flex-col items-center">
                     <div class="grid-icon bg-red-50 text-red-600"><i class="fas fa-trophy"></i></div>
-                    <span class="text-[11px] font-bold text-gray-600">টুর্নামেন্ট</span>
+                    <span class="text-[10px] font-bold text-gray-500 uppercase">টুর্নামেন্ট</span>
                 </div>
-                <div onclick="showPage('players')" class="flex flex-col items-center">
-                    <div class="grid-icon bg-blue-50 text-blue-600"><i class="fas fa-user-friends"></i></div>
-                    <span class="text-[11px] font-bold text-gray-600">প্লেয়ার</span>
+                <div onclick="openPage('verify')" class="flex flex-col items-center relative">
+                    <div class="grid-icon bg-blue-50 text-blue-600"><i class="fas fa-check-circle"></i></div>
+                    <span class="text-[10px] font-bold text-gray-500 uppercase">পেমেন্ট</span>
+                    <div id="badge-pending" class="absolute top-0 right-3 bg-red-600 text-white text-[8px] px-1.5 py-0.5 rounded-full hidden">0</div>
                 </div>
-                <div onclick="showPage('verify')" class="flex flex-col items-center relative">
-                    <div class="grid-icon bg-green-50 text-green-600"><i class="fas fa-check-double"></i></div>
-                    <span class="text-[11px] font-bold text-gray-600">ভেরিফাই</span>
-                    <span id="badge-count" class="hidden absolute top-0 right-2 bg-red-600 text-white text-[9px] px-1.5 py-0.5 rounded-full font-bold">0</span>
+                <div onclick="openPage('results')" class="flex flex-col items-center">
+                    <div class="grid-icon bg-purple-50 text-purple-600"><i class="fas fa-chart-line"></i></div>
+                    <span class="text-[10px] font-bold text-gray-500 uppercase">রেজাল্ট</span>
                 </div>
-                <div onclick="showPage('banners')" class="flex flex-col items-center">
+                <div onclick="openPage('banners')" class="flex flex-col items-center">
                     <div class="grid-icon bg-orange-50 text-orange-600"><i class="fas fa-images"></i></div>
-                    <span class="text-[11px] font-bold text-gray-600">ব্যানার</span>
+                    <span class="text-[10px] font-bold text-gray-500 uppercase">ব্যানার</span>
                 </div>
-                <div onclick="showPage('results')" class="flex flex-col items-center">
-                    <div class="grid-icon bg-purple-50 text-purple-600"><i class="fas fa-poll-h"></i></div>
-                    <span class="text-[11px] font-bold text-gray-600">রেজাল্ট</span>
+                <div onclick="openPage('notifications')" class="flex flex-col items-center">
+                    <div class="grid-icon bg-yellow-50 text-yellow-600"><i class="fas fa-bullhorn"></i></div>
+                    <span class="text-[10px] font-bold text-gray-500 uppercase">নোটিশ</span>
                 </div>
-                <div onclick="showPage('tools')" class="flex flex-col items-center">
-                    <div class="grid-icon bg-gray-50 text-gray-600"><i class="fas fa-shield-alt"></i></div>
-                    <span class="text-[11px] font-bold text-gray-600">সিকিউরিটি</span>
+                <div onclick="openPage('withdraw')" class="flex flex-col items-center">
+                    <div class="grid-icon bg-green-50 text-green-600"><i class="fas fa-wallet"></i></div>
+                    <span class="text-[10px] font-bold text-gray-500 uppercase">উইথড্র</span>
                 </div>
             </div>
 
-            <!-- PAGE: TOURNAMENT MANAGEMENT -->
+            <!-- 1. TOURNAMENT PAGE (Timer + Match Control) -->
             <div id="page-matches" class="hidden page-content">
-                <div class="flex justify-between items-center mb-5">
+                <div class="flex justify-between items-center mb-6">
                     <h3 class="font-bold text-gray-800 text-lg">ম্যাচ কন্ট্রোল</h3>
-                    <button onclick="document.getElementById('modal-match').style.display='flex'" class="bg-red-600 text-white px-5 py-2 rounded-2xl text-xs font-bold shadow-lg">+ নতুন ম্যাচ</button>
+                    <button onclick="toggleModal('modal-add-match', true)" class="bg-red-600 text-white px-5 py-2.5 rounded-2xl text-xs font-bold shadow-lg">+ নতুন ম্যাচ</button>
                 </div>
-                <div id="render-matches" class="space-y-4"></div>
+                <div id="match-list" class="space-y-4"></div>
             </div>
 
-            <!-- PAGE: PAYMENT VERIFICATION -->
+            <!-- 2. PAYMENT VERIFY PAGE -->
             <div id="page-verify" class="hidden page-content">
-                <h3 class="font-bold text-gray-800 text-lg mb-4">পেমেন্ট রিকোয়েস্ট</h3>
-                <div id="render-verify" class="space-y-4"></div>
+                <h3 class="font-bold text-gray-800 text-lg mb-4">পেমেন্ট ও ভেরিফিকেশন</h3>
+                <div id="verify-list" class="space-y-4"></div>
             </div>
 
-            <!-- PAGE: BANNER MANAGEMENT -->
+            <!-- 3. RESULT & LEADERBOARD PAGE -->
+            <div id="page-results" class="hidden page-content">
+                <h3 class="font-bold text-gray-800 text-lg mb-4">উইনার ও লিডারবোর্ড</h3>
+                <div id="result-match-list" class="space-y-4"></div>
+            </div>
+
+            <!-- 4. NOTIFICATION SYSTEM -->
+            <div id="page-notifications" class="hidden page-content">
+                <div class="bg-white p-6 rounded-[35px] card-shadow">
+                    <h3 class="font-bold text-gray-800 mb-4">পুশ নোটিফিকেশন পাঠান</h3>
+                    <textarea id="notif-input" rows="3" placeholder="প্লেয়ারদের জন্য মেসেজ লিখুন..." class="w-full bg-gray-50 p-4 rounded-2xl outline-none select-text text-sm mb-4 border border-gray-100"></textarea>
+                    <button onclick="sendPushNotif()" class="w-full nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg">SEND NOTIFICATION</button>
+                </div>
+            </div>
+
+            <!-- 5. BANNER CONTROL -->
             <div id="page-banners" class="hidden page-content">
                 <div class="bg-white p-6 rounded-[35px] card-shadow mb-6">
-                    <h3 class="font-bold text-gray-800 mb-4 uppercase text-sm tracking-widest">Slider Banner Setup</h3>
-                    <input type="text" id="banner-input" placeholder="Image URL (Link)" class="w-full bg-gray-50 p-4 rounded-2xl outline-none select-text mb-4 border border-gray-100">
-                    <button onclick="uploadBanner()" class="w-full nagad-gradient text-white py-3 rounded-2xl font-bold shadow-lg">ব্যানার যুক্ত করুন</button>
+                    <h3 class="font-bold text-gray-800 mb-4">Slider Image URL</h3>
+                    <input type="text" id="banner-input" placeholder="https://..." class="w-full bg-gray-50 p-4 rounded-2xl outline-none select-text mb-4 border border-gray-100 text-xs">
+                    <button onclick="saveBanner()" class="w-full nagad-gradient text-white py-3 rounded-2xl font-bold shadow-lg">UPDATE BANNER</button>
                 </div>
-                <div id="render-banners" class="flex gap-3 overflow-x-auto pb-4"></div>
-            </div>
-
-            <!-- PAGE: PLAYER MANAGEMENT -->
-            <div id="page-players" class="hidden page-content">
-                <input type="text" id="player-search" onkeyup="searchPlayers()" placeholder="সার্চ প্লেয়ার (নাম বা আইডি...)" class="w-full bg-white p-4 rounded-[25px] card-shadow outline-none mb-6 select-text">
-                <div id="render-players" class="space-y-3"></div>
+                <div id="banner-render" class="flex gap-3 overflow-x-auto pb-4"></div>
             </div>
 
         </main>
 
-        <!-- Bottom Tab Bar -->
-        <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex justify-around p-4 z-[100] rounded-t-[40px] shadow-[0_-5px_25px_rgba(0,0,0,0.05)]">
-            <button onclick="showPage('home')" id="btn-home" class="flex flex-col items-center text-red-600 transition">
-                <i class="fas fa-home text-xl"></i><span class="text-[10px] mt-1 font-bold">হোম</span>
+        <!-- Fixed Bottom Tab Bar -->
+        <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-50 flex justify-around p-4 z-[1000] rounded-t-[40px] shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
+            <button onclick="openPage('home')" id="tab-btn-home" class="tab-btn flex flex-col items-center text-red-600">
+                <i class="fas fa-home text-xl"></i><span class="text-[9px] mt-1 font-bold uppercase">Home</span>
             </button>
-            <button onclick="showPage('matches')" id="btn-matches" class="flex flex-col items-center text-gray-400">
-                <i class="fas fa-gamepad text-xl"></i><span class="text-[10px] mt-1 font-bold">ম্যাচ</span>
+            <button onclick="openPage('matches')" id="tab-btn-matches" class="tab-btn flex flex-col items-center text-gray-300">
+                <i class="fas fa-trophy text-xl"></i><span class="text-[9px] mt-1 font-bold uppercase">Tournament</span>
             </button>
-            <button onclick="showPage('verify')" id="btn-verify" class="flex flex-col items-center text-gray-400">
-                <i class="fas fa-check-circle text-xl"></i><span class="text-[10px] mt-1 font-bold">ভেরিফাই</span>
+            <button onclick="openPage('verify')" id="tab-btn-verify" class="tab-btn flex flex-col items-center text-gray-300">
+                <i class="fas fa-check-shield text-xl"></i><span class="text-[9px] mt-1 font-bold uppercase">Verify</span>
             </button>
-            <button onclick="exitAdmin()" class="flex flex-col items-center text-gray-400">
-                <i class="fas fa-sign-out-alt text-xl"></i><span class="text-[10px] mt-1 font-bold">লগআউট</span>
+            <button onclick="openPage('notifications')" id="tab-btn-notifications" class="tab-btn flex flex-col items-center text-gray-300">
+                <i class="fas fa-comment-alt text-xl"></i><span class="text-[9px] mt-1 font-bold uppercase">Alerts</span>
             </button>
         </nav>
     </div>
 
-    <!-- MODAL: ADD MATCH -->
-    <div id="modal-match" class="fixed inset-0 bg-black/60 z-[2000] hidden items-center justify-center p-6 backdrop-blur-sm">
-        <div class="bg-white w-full max-w-sm rounded-[40px] p-8 shadow-2xl">
-            <h3 class="text-xl font-bold mb-6 text-center text-red-600 uppercase">Setup Tournament</h3>
+    <!-- MODAL: ADD MATCH (Timer Added) -->
+    <div id="modal-add-match" class="fixed inset-0 bg-black/60 z-[10000] hidden items-center justify-center p-6 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-sm rounded-[45px] p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
+            <h3 class="text-xl font-bold mb-6 text-center text-red-600 uppercase tracking-widest">New Match Setup</h3>
             <form id="match-form" class="space-y-4">
-                <input type="text" name="title" placeholder="Match Title" class="w-full bg-gray-50 p-4 rounded-2xl outline-none select-text font-bold border border-gray-100" required>
+                <input type="text" name="title" placeholder="Match Name (e.g. Daily Solo)" class="w-full bg-gray-50 p-4 rounded-2xl outline-none select-text font-bold border border-gray-100" required>
                 <div class="grid grid-cols-2 gap-3">
                     <input type="number" name="fee" placeholder="Entry Fee ৳" class="bg-gray-50 p-4 rounded-2xl outline-none select-text border border-gray-100" required>
-                    <input type="number" name="prize" placeholder="Prize ৳" class="bg-gray-50 p-4 rounded-2xl outline-none select-text border border-gray-100" required>
+                    <input type="number" name="prize" placeholder="Win Prize ৳" class="bg-gray-50 p-4 rounded-2xl outline-none select-text border border-gray-100" required>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
-                    <select name="map" class="bg-gray-50 p-4 rounded-2xl outline-none font-bold text-gray-500 border border-gray-100"><option value="Bermuda">Bermuda</option><option value="Purgatory">Purgatory</option></select>
-                    <select name="type" class="bg-gray-50 p-4 rounded-2xl outline-none font-bold text-gray-500 border border-gray-100"><option value="Solo">Solo</option><option value="Squad">Squad</option></select>
+                    <select name="map" class="bg-gray-50 p-4 rounded-2xl outline-none font-bold text-gray-500 border border-gray-100">
+                        <option value="Bermuda">Bermuda</option><option value="Purgatory">Purgatory</option>
+                    </select>
+                    <select name="type" class="bg-gray-50 p-4 rounded-2xl outline-none font-bold text-gray-500 border border-gray-100">
+                        <option value="Solo">Solo</option><option value="Duo">Duo</option><option value="Squad">Squad</option>
+                    </select>
                 </div>
-                <input type="text" name="time" placeholder="Match Time (e.g. 9:00 PM)" class="w-full bg-gray-50 p-4 rounded-2xl outline-none select-text border border-gray-100" required>
+                <div>
+                    <label class="text-[10px] text-gray-400 font-bold ml-2 uppercase">Room Info Release Time (Timestamp)</label>
+                    <input type="text" name="releaseTime" placeholder="উদা: 09:30 PM" class="w-full bg-gray-50 p-4 rounded-2xl outline-none select-text border border-gray-100" required>
+                </div>
                 <div class="flex gap-3 pt-4">
-                    <button type="button" onclick="document.getElementById('modal-match').style.display='none'" class="flex-1 bg-gray-100 py-4 rounded-2xl font-bold text-gray-500">বাতিল</button>
-                    <button type="submit" class="flex-[2] nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg">পাবলিশ</button>
+                    <button type="button" onclick="toggleModal('modal-add-match', false)" class="flex-1 bg-gray-100 py-4 rounded-2xl font-bold text-gray-400">EXIT</button>
+                    <button type="submit" class="flex-[2] nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg">PUBLISH</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- FIREBASE & LOGIC -->
+    <!-- CORE ENGINE (FIREBASE) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, doc, updateDoc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDUHOA9iEYJGpkuRWgjCg8L00sQpW-36sk",
@@ -202,174 +227,172 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Security
-        const ADMIN_PIN = "yasin999";
+        // Security PIN
+        const MASTER_PIN = "yasin999";
 
-        window.verifyAccess = () => {
-            const input = document.getElementById('admin-pin').value;
-            if(input === ADMIN_PIN) {
-                localStorage.setItem('battle_pro_auth', 'true');
+        window.verifyAdmin = () => {
+            const pin = document.getElementById('admin-pin-input').value;
+            if(pin === MASTER_PIN) {
+                localStorage.setItem('ba_admin_session', 'active');
                 document.getElementById('pin-screen').classList.add('hidden');
-                document.getElementById('app-body').classList.remove('hidden');
-                initEngine();
+                document.getElementById('app-content').classList.remove('hidden');
+                startAdminApp();
             } else {
-                document.getElementById('pin-error').classList.remove('hidden');
-                document.getElementById('admin-pin').value = '';
+                document.getElementById('error-msg').classList.remove('hidden');
+                document.getElementById('admin-pin-input').value = '';
             }
         };
 
-        // Auto-login Check
-        if(localStorage.getItem('battle_pro_auth') === 'true') {
-            document.getElementById('pin-screen').classList.add('hidden');
-            document.getElementById('app-body').classList.remove('hidden');
-            window.addEventListener('load', initEngine);
-        }
+        // Automatic Session Check
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader-screen').style.opacity = '0';
+                setTimeout(() => document.getElementById('loader-screen').style.display = 'none', 600);
+                
+                if(localStorage.getItem('ba_admin_session') === 'active') {
+                    document.getElementById('app-content').classList.remove('hidden');
+                    startAdminApp();
+                } else {
+                    document.getElementById('pin-screen').classList.remove('hidden');
+                }
+            }, 1800);
+        });
 
-        window.exitAdmin = () => {
-            localStorage.removeItem('battle_pro_auth');
-            location.reload();
-        };
+        window.logoutAdmin = () => { localStorage.removeItem('ba_admin_session'); location.reload(); };
 
-        // Tab Switcher
-        window.showPage = (pageId) => {
-            const pages = ['home', 'matches', 'players', 'verify', 'banners'];
-            pages.forEach(p => { if(document.getElementById('page-'+p)) document.getElementById('page-'+p).classList.add('hidden'); });
-            document.getElementById('home-tab').classList.add('hidden');
+        // TAB SYSTEM
+        window.openPage = (id) => {
+            document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.replace('text-red-600', 'text-gray-300'));
             
-            if(pageId === 'home') document.getElementById('home-tab').classList.remove('hidden');
-            else document.getElementById('page-'+pageId).classList.add('page-active');
-
-            // Nav Highlight
-            const navs = ['home', 'matches', 'verify'];
-            navs.forEach(n => document.getElementById('btn-'+n).classList.replace('text-red-600', 'text-gray-400'));
-            if(navs.includes(pageId)) document.getElementById('btn-'+pageId).classList.replace('text-gray-400', 'text-red-600');
+            if(id === 'home') {
+                document.getElementById('tab-home').classList.remove('hidden');
+                document.getElementById('tab-btn-home').classList.replace('text-gray-300', 'text-red-600');
+            } else {
+                document.getElementById('page-'+id).classList.add('page-active');
+                if(document.getElementById('tab-btn-'+id)) {
+                    document.getElementById('tab-btn-'+id).classList.replace('text-gray-300', 'text-red-600');
+                }
+            }
         };
 
-        // Initialization
-        function initEngine() {
-            loadStats();
-            loadMatches();
-            loadVerify();
-            loadPlayers();
-            loadBanners();
+        window.toggleModal = (id, show) => { document.getElementById(id).style.display = show ? 'flex' : 'none'; };
+
+        // --- APP ENGINE START ---
+        function startAdminApp() {
+            syncStats();
+            syncMatches();
+            syncVerify();
+            syncBanners();
         }
 
-        function loadStats() {
-            onSnapshot(collection(db, "users"), snap => document.getElementById('stat-users').innerText = snap.size);
-            onSnapshot(query(collection(db, "registrations"), where("status", "==", "approved")), snap => {
-                let total = 0; snap.forEach(d => total += Number(d.data().fee || 0));
-                document.getElementById('stat-income').innerText = total.toFixed(2);
+        function syncStats() {
+            onSnapshot(collection(db, "users"), s => document.getElementById('stat-total-users').innerText = s.size);
+            onSnapshot(query(collection(db, "registrations"), where("status", "==", "approved")), s => {
+                let cash = 0; s.forEach(d => cash += Number(d.data().fee || 0));
+                document.getElementById('stat-money').innerText = cash.toFixed(2);
             });
         }
 
-        // Matches
+        // MATCH CONTROL
         document.getElementById('match-form').onsubmit = async (e) => {
             e.preventDefault();
-            const data = {
-                title: e.target.title.value, fee: e.target.fee.value, prize: e.target.prize.value,
-                time: e.target.time.value, map: e.target.map.value, type: e.target.type.value,
+            const m = e.target;
+            await addDoc(collection(db, "matches"), {
+                title: m.title.value, fee: m.fee.value, prize: m.prize.value,
+                map: m.map.value, type: m.type.value, releaseTime: m.releaseTime.value,
                 status: 'open', roomID: '', roomPass: '', createdAt: new Date().getTime()
-            };
-            await addDoc(collection(db, "matches"), data);
-            document.getElementById('modal-match').style.display='none';
-            e.target.reset();
+            });
+            toggleModal('modal-add-match', false);
+            m.reset();
         };
 
-        function loadMatches() {
-            const list = document.getElementById('render-matches');
-            onSnapshot(query(collection(db, "matches"), orderBy("createdAt", "desc")), snap => {
+        function syncMatches() {
+            const list = document.getElementById('match-list');
+            onSnapshot(query(collection(db, "matches"), orderBy("createdAt", "desc")), s => {
                 list.innerHTML = '';
-                snap.forEach(d => {
-                    const m = d.data();
+                s.forEach(d => {
+                    const data = d.data();
                     list.innerHTML += `
-                        <div class="bg-white p-5 rounded-[30px] card-shadow border-l-[10px] border-red-500 flex justify-between items-center">
-                            <div>
-                                <h4 class="font-bold text-gray-800 uppercase text-sm">${m.title}</h4>
-                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">${m.time} | ৳${m.fee}</p>
+                        <div class="bg-white p-5 rounded-[35px] card-shadow border-l-[12px] border-red-600 flex justify-between items-center">
+                            <div class="flex-1">
+                                <h4 class="font-bold text-gray-800 text-sm uppercase">${data.title}</h4>
+                                <p class="text-[9px] text-gray-400 font-bold uppercase mt-1">Release: ${data.releaseTime} • Map: ${data.map}</p>
                                 <div class="mt-3 flex gap-2">
-                                    <button onclick="setRoom('${d.id}')" class="bg-red-50 text-red-600 text-[10px] px-3 py-1.5 rounded-xl font-bold border border-red-100">ROOM ID</button>
-                                    <button onclick="deleteDocById('matches', '${d.id}')" class="bg-gray-50 text-gray-400 text-[10px] px-3 py-1.5 rounded-xl font-bold border border-gray-100">DELETE</button>
+                                    <button onclick="setRoomDetails('${d.id}')" class="bg-red-50 text-red-600 text-[10px] px-3 py-1.5 rounded-xl font-bold border border-red-100">RELEASE ROOM</button>
+                                    <button onclick="delDoc('matches', '${d.id}')" class="bg-gray-50 text-gray-400 text-[10px] px-3 py-1.5 rounded-xl font-bold border border-gray-100">DELETE</button>
                                 </div>
                             </div>
-                            <span class="bg-green-100 text-green-600 text-[10px] font-black px-4 py-1.5 rounded-full uppercase">${m.status}</span>
+                            <div class="bg-green-100 text-green-600 text-[9px] font-black px-3 py-1.5 rounded-full uppercase">${data.status}</div>
                         </div>`;
                 });
             });
         }
 
-        window.setRoom = async (id) => {
-            const rid = prompt("Room ID দিন:");
-            const rps = prompt("Password দিন:");
+        window.setRoomDetails = async (id) => {
+            const rid = prompt("গেম রুম আইডি দিন:");
+            const rps = prompt("রুম পাসওয়ার্ড দিন:");
             if(rid && rps) await updateDoc(doc(db, "matches", id), { roomID: rid, roomPass: rps, status: 'live' });
         };
 
-        // Payment Verification
-        function loadVerify() {
-            const list = document.getElementById('render-verify');
-            const badge = document.getElementById('badge-count');
-            onSnapshot(query(collection(db, "registrations"), where("status", "==", "pending")), snap => {
+        // PAYMENT VERIFY (With Screenshot Review Support)
+        function syncVerify() {
+            const list = document.getElementById('verify-list');
+            const badge = document.getElementById('badge-pending');
+            onSnapshot(query(collection(db, "registrations"), where("status", "==", "pending")), s => {
                 list.innerHTML = '';
-                badge.innerText = snap.size;
-                if(snap.size > 0) badge.classList.remove('hidden'); else badge.classList.add('hidden');
-                snap.forEach(d => {
+                badge.innerText = s.size;
+                badge.style.display = s.size > 0 ? 'block' : 'none';
+                s.forEach(d => {
                     const r = d.data();
                     list.innerHTML += `
-                        <div class="bg-white p-5 rounded-[35px] card-shadow border-l-[10px] border-orange-500">
+                        <div class="bg-white p-5 rounded-[35px] card-shadow border-l-[12px] border-orange-500">
                             <div class="flex justify-between items-start mb-4">
-                                <div><h4 class="font-bold text-gray-800 uppercase">${r.playerName}</h4><p class="text-xs text-orange-600 font-bold">TrxID: ${r.trxID}</p></div>
-                                <div class="text-right text-xs font-black">৳${r.fee || 0}</div>
+                                <div><h4 class="font-bold text-gray-800 uppercase text-xs">${r.playerName}</h4><p class="text-[10px] text-orange-600 font-bold">TrxID: ${r.trxID}</p></div>
+                                <div class="text-right text-[10px] font-black text-gray-400">Match: ${r.matchTitle}</div>
                             </div>
+                            ${r.screenshot ? `<button onclick="window.open('${r.screenshot}')" class="w-full bg-blue-50 text-blue-600 text-[10px] py-2 rounded-xl mb-3 font-bold underline">VIEW SCREENSHOT PROOF</button>` : ''}
                             <div class="flex gap-2">
-                                <button onclick="verifyPay('${d.id}')" class="flex-1 nagad-gradient text-white py-3 rounded-2xl font-bold text-xs shadow-md">APPROVE</button>
-                                <button onclick="deleteDocById('registrations', '${d.id}')" class="flex-1 bg-gray-100 text-gray-400 py-3 rounded-2xl font-bold text-xs">REJECT</button>
+                                <button onclick="approvePay('${d.id}')" class="flex-1 nagad-gradient text-white py-3 rounded-2xl font-bold text-xs shadow-md">APPROVE</button>
+                                <button onclick="delDoc('registrations', '${d.id}')" class="flex-1 bg-gray-100 text-gray-400 py-3 rounded-2xl font-bold text-xs">REJECT</button>
                             </div>
                         </div>`;
                 });
             });
         }
 
-        window.verifyPay = async (id) => await updateDoc(doc(db, "registrations", id), { status: 'approved' });
+        window.approvePay = async (id) => await updateDoc(doc(db, "registrations", id), { status: 'approved' });
 
-        // Players & Banners
-        window.uploadBanner = async () => {
+        // NOTIFICATIONS
+        window.sendPushNotif = async () => {
+            const msg = document.getElementById('notif-input').value;
+            if(!msg) return alert("মেসেজ খালি!");
+            await addDoc(collection(db, "notifications"), { message: msg, time: new Date().toLocaleString(), createdAt: new Date() });
+            alert("সব প্লেয়ারের কাছে নোটিশ পাঠানো হয়েছে!");
+            document.getElementById('notif-input').value = '';
+        };
+
+        // BANNERS
+        window.saveBanner = async () => {
             const url = document.getElementById('banner-input').value;
             if(url) { await addDoc(collection(db, "banners"), { url, createdAt: new Date() }); document.getElementById('banner-input').value=''; }
         };
 
-        function loadBanners() {
-            const list = document.getElementById('render-banners');
-            onSnapshot(collection(db, "banners"), snap => {
-                list.innerHTML = '';
-                snap.forEach(d => {
-                    list.innerHTML += `
+        function syncBanners() {
+            const render = document.getElementById('banner-render');
+            onSnapshot(collection(db, "banners"), s => {
+                render.innerHTML = '';
+                s.forEach(d => {
+                    render.innerHTML += `
                         <div class="relative flex-shrink-0">
-                            <img src="${d.data().url}" class="w-44 h-28 object-cover rounded-[25px] shadow-md border-2 border-white">
-                            <button onclick="deleteDocById('banners', '${d.id}')" class="absolute -top-2 -right-1 bg-red-600 text-white w-7 h-7 rounded-full shadow-lg border-2 border-white text-xs">×</button>
+                            <img src="${d.data().url}" class="w-48 h-28 object-cover rounded-[30px] shadow-lg border-4 border-white">
+                            <button onclick="delDoc('banners', '${d.id}')" class="absolute -top-2 -right-1 bg-red-600 text-white w-7 h-7 rounded-full shadow-lg border-2 border-white text-xs">×</button>
                         </div>`;
                 });
             });
         }
 
-        function loadPlayers() {
-            onSnapshot(collection(db, "users"), snap => {
-                window.allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                renderUsers(window.allUsers);
-            });
-        }
-
-        function renderUsers(users) {
-            const list = document.getElementById('render-players'); list.innerHTML = '';
-            users.forEach(u => {
-                list.innerHTML += `
-                    <div class="bg-white p-4 rounded-[25px] card-shadow flex items-center gap-4 border border-gray-50">
-                        <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-400 text-lg uppercase">${u.name?u.name[0]:'?'}</div>
-                        <div class="flex-1"><h4 class="text-sm font-bold text-gray-800">${u.name || 'User'}</h4><p class="text-[10px] text-gray-400 font-bold">${u.email}</p></div>
-                        <button onclick="deleteDocById('users', '${u.id}')" class="text-red-300 active:text-red-600 px-3"><i class="fas fa-trash-alt"></i></button>
-                    </div>`;
-            });
-        }
-
-        window.deleteDocById = async (col, id) => { if(confirm("Are you sure?")) await deleteDoc(doc(db, col, id)); };
+        window.delDoc = async (col, id) => { if(confirm("Are you sure?")) await deleteDoc(doc(db, col, id)); };
 
     </script>
 </body>
