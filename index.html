@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BattleArena Pro - Player Zone</title>
+    <title>BattleArena - Player Zone</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <style>
@@ -31,69 +31,56 @@
 </head>
 <body oncontextmenu="return false;">
 
-    <!-- 1. LOADING SCREEN -->
-    <div id="loader"><div class="ring"></div><h1 class="mt-4 text-3xl font-black text-red-600 italic tracking-tighter uppercase font-sans">BattleArena</h1><p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Connecting...</p></div>
+    <div id="loader"><div class="ring"></div><h1 class="mt-4 text-3xl font-black text-red-600 italic tracking-tighter uppercase font-sans">BattleArena</h1><p id="loading-text" class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Connecting...</p></div>
 
-    <!-- 2. GLOBAL NEWS POPUP -->
+    <!-- NOTIFICATION MODAL (Breaking News) -->
     <div id="notif-modal" class="fixed top-6 left-6 right-6 bg-yellow-400 p-5 rounded-[30px] shadow-2xl z-[15000] hidden border-b-4 border-red-600">
         <div class="flex items-center gap-4">
             <i class="fas fa-bullhorn text-2xl text-red-700 animate-bounce"></i>
-            <div class="flex-1">
-                <h4 class="font-black text-red-800 text-[10px] uppercase italic">Breaking News!</h4>
-                <p id="notif-msg" class="text-[12px] text-red-900 font-bold leading-tight mt-1"></p>
-            </div>
+            <div class="flex-1"><h4 class="font-black text-red-800 text-[10px] uppercase italic">Breaking News!</h4><p id="notif-msg" class="text-[12px] text-red-900 font-bold leading-tight mt-1"></p></div>
             <button onclick="document.getElementById('notif-modal').style.display='none'" class="text-red-900 bg-white/20 p-2 rounded-full"><i class="fas fa-times"></i></button>
         </div>
     </div>
 
-    <!-- 3. LOGIN/SIGNUP -->
+    <!-- AUTH SCREEN (Login/Signup Fixed) -->
     <div id="auth-screen" class="hidden fixed inset-0 bg-white z-[9000] flex flex-col items-center justify-center p-8">
         <div class="w-20 h-20 nagad-gradient rounded-[25px] flex items-center justify-center mb-6 shadow-xl"><i class="fas fa-gamepad text-4xl text-white"></i></div>
         <h2 id="auth-title" class="text-2xl font-bold text-gray-800 mb-2 font-sans text-center uppercase italic">Player Login</h2>
-        <form onsubmit="handleAuth(event)" class="w-full max-w-sm space-y-4">
-            <input type="email" id="auth-email" placeholder="Email Address" class="w-full bg-gray-50 p-4 rounded-2xl border border-gray-100 outline-none select-text font-bold" required>
-            <input type="password" id="auth-pass" placeholder="Password" class="w-full bg-gray-50 p-4 rounded-2xl border border-gray-100 outline-none select-text font-bold" required>
-            <button type="submit" id="auth-btn" class="w-full nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg uppercase tracking-wider">Access Account</button>
+        <form id="auth-form" onsubmit="handleAuth(event)" class="w-full max-w-sm space-y-4">
+            <input type="email" id="auth-email" placeholder="ইমেইল এড্রেস" class="w-full bg-gray-50 p-4 rounded-2xl border border-gray-100 outline-none select-text font-bold" required>
+            <input type="password" id="auth-pass" placeholder="পাসওয়ার্ড" class="w-full bg-gray-50 p-4 rounded-2xl border border-gray-100 outline-none select-text font-bold" required>
+            <button type="submit" id="auth-btn" class="w-full nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg uppercase tracking-wider">LOG IN</button>
         </form>
-        <p onclick="toggleAuth()" id="auth-toggle" class="mt-6 text-sm text-red-600 font-bold cursor-pointer underline uppercase text-center font-sans">New Here? Register</p>
+        <p onclick="toggleAuthMode()" id="auth-toggle" class="mt-6 text-sm text-red-600 font-bold cursor-pointer underline uppercase text-center font-sans">New Here? Sign Up</p>
     </div>
 
-    <!-- 4. MAIN APP AREA -->
+    <!-- MAIN APP AREA -->
     <div id="app-body" class="hidden min-h-screen pb-32">
-        <header class="nagad-gradient p-6 pb-28 text-white sticky top-0 z-50 rounded-b-[50px] shadow-2xl text-center">
-            <div class="flex justify-between items-center text-left">
+        <header class="nagad-gradient p-6 pb-28 text-white sticky top-0 z-50 rounded-b-[50px] shadow-2xl">
+            <div class="flex justify-between items-center">
                 <div class="flex items-center gap-3">
                     <div id="user-initial" class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-xl font-bold border border-white/30 shadow-inner uppercase">U</div>
-                    <div>
-                        <h2 class="font-black text-lg leading-tight uppercase font-sans tracking-tighter">PLAYER</h2>
-                        <p class="text-[10px] opacity-90 font-black text-yellow-300 uppercase tracking-widest italic" id="user-name-ui">YASIN</p>
-                    </div>
+                    <div><h2 class="font-black text-lg leading-tight uppercase font-sans tracking-tighter">PLAYER</h2><p class="text-[10px] opacity-90 font-black text-yellow-300 uppercase tracking-widest italic" id="user-name-display">YASIN</p></div>
                 </div>
                 <button onclick="logoutUser()" class="bg-white/10 w-10 h-10 rounded-2xl flex items-center justify-center border border-white/10 active:bg-red-800 transition shadow-lg"><i class="fas fa-sign-out-alt"></i></button>
             </div>
             <div class="mt-8 flex justify-between items-end">
-                <div class="text-left">
-                    <p class="text-[10px] uppercase font-bold opacity-70 mb-1" id="lbl-balance">My Balance</p>
-                    <h3 class="text-3xl font-bold italic font-sans">৳ <span id="balance-display">0.00</span></h3>
-                </div>
-                <button onclick="openModal('modal-add-money')" class="bg-yellow-400 text-red-700 px-6 py-2 rounded-full text-[11px] font-black uppercase shadow-xl active:scale-90 transition" id="btn-add">Add Money</button>
+                <div><p class="text-[10px] uppercase font-bold opacity-70 mb-1">Available Balance</p><h3 class="text-3xl font-bold italic font-sans">৳ <span id="balance-display">0.00</span></h3></div>
+                <button onclick="openModal('modal-add-money')" class="bg-yellow-400 text-red-700 px-5 py-2 rounded-full text-[11px] font-black uppercase shadow-lg active:scale-90 transition">Deposit</button>
             </div>
         </header>
 
         <main class="px-5 -mt-16 relative z-[600]">
-            <!-- Banner Slider -->
-            <div class="bg-white rounded-[35px] p-2 card-shadow mb-6 border border-gray-50 overflow-hidden">
-                <div id="slider-container"><div id="banner-slider"></div></div>
-            </div>
+            <!-- Slider -->
+            <div class="bg-white rounded-[35px] p-2 card-shadow mb-6 border border-gray-50 overflow-hidden"><div id="slider-container"><div id="banner-slider"></div></div></div>
 
-            <!-- TABS -->
-            <div id="tab-home" class="tab-page active-tab"><h3 class="font-bold text-gray-800 text-lg mb-5 px-2 font-sans italic" id="lbl-matches">ACTIVE TOURNAMENTS</h3><div id="match-list" class="space-y-6"></div></div>
-            <div id="tab-joined" class="tab-page"><h3 class="font-bold text-gray-800 text-lg mb-5 px-2 uppercase tracking-widest" id="lbl-my-joined">Participated</h3><div id="my-matches-list" class="space-y-4"></div></div>
+            <div id="tab-home" class="tab-page active-tab"><h3 class="font-bold text-gray-800 text-lg mb-5 px-2 font-sans italic">ACTIVE TOURNAMENTS</h3><div id="match-list" class="space-y-6"></div></div>
+            <div id="tab-joined" class="tab-page"><h3 class="font-bold text-gray-800 text-lg mb-5 px-2 uppercase tracking-widest">Participated</h3><div id="my-matches-list" class="space-y-4"></div></div>
             <div id="tab-support" class="tab-page">
                 <div class="bg-white p-8 rounded-[40px] card-shadow border border-gray-50 text-center">
-                    <h2 class="text-xl font-bold text-gray-800 uppercase mb-4 italic" id="lbl-support-title">Support (সেবা)</h2>
+                    <h2 class="text-xl font-bold text-gray-800 uppercase mb-4 italic">Support (সেবা)</h2>
                     <textarea id="support-msg" rows="4" placeholder="আপনার সমস্যাটি লিখুন..." class="w-full bg-gray-50 p-5 rounded-3xl outline-none border border-gray-100 text-sm mb-4 select-text"></textarea>
-                    <button onclick="sendSupportMsg()" class="w-full nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg">Send Message</button>
+                    <button onclick="sendSupportMsg()" class="w-full nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg uppercase">Send Message</button>
                     <div id="support-history" class="mt-8 text-left space-y-4"></div>
                 </div>
             </div>
@@ -106,62 +93,38 @@
         </nav>
     </div>
 
-    <!-- MODAL: ADD MONEY (নম্বর এবং কপি বাটন ফিক্সড) -->
+    <!-- MODAL: ADD MONEY (নম্বর এবং কপি বাটনসহ) -->
     <div id="modal-add-money" class="fixed inset-0 bg-black/60 z-[10000] hidden items-center justify-center p-6 backdrop-blur-sm">
-        <div class="bg-white w-full max-w-sm rounded-[45px] p-8 shadow-2xl text-center overflow-y-auto max-h-[95vh]">
+        <div class="bg-white w-full max-w-sm rounded-[45px] p-8 shadow-2xl text-center overflow-y-auto max-h-[90vh]">
             <h3 class="text-xl font-black text-red-600 uppercase mb-6 italic tracking-widest font-sans">Payment Info</h3>
-            
-            <p class="text-[10px] text-gray-400 font-bold mb-4 uppercase">নিচের নম্বরে টাকা পাঠিয়ে TrxID দিন:</p>
-            
-            <div id="payment-numbers" class="space-y-3 mb-6 text-sans text-xs">
-                <!-- ডাইনামিক নম্বর এবং কপি বাটন এখানে আসবে -->
-                <div id="box-nagad" class="bg-red-50 p-4 rounded-2xl text-left border-l-8 border-red-500 hidden">
-                    <p class="text-red-600 font-black uppercase tracking-widest text-[9px] italic">Nagad Personal</p>
-                    <div class="flex justify-between items-center mt-1">
-                        <p class="text-base font-black text-gray-800 select-text" id="val-nagad"></p>
-                        <button onclick="copyNum('val-nagad')" class="bg-white text-red-600 px-3 py-1 rounded-lg border border-red-100 font-black text-[10px] shadow-sm">COPY</button>
-                    </div>
-                </div>
-                <div id="box-bkash" class="bg-orange-50 p-4 rounded-2xl text-left border-l-8 border-orange-500 hidden">
-                    <p class="text-orange-600 font-black uppercase tracking-widest text-[9px] italic">Bkash Personal</p>
-                    <div class="flex justify-between items-center mt-1">
-                        <p class="text-base font-black text-gray-800 select-text" id="val-bkash"></p>
-                        <button onclick="copyNum('val-bkash')" class="bg-white text-orange-600 px-3 py-1 rounded-lg border border-orange-100 font-black text-[10px] shadow-sm">COPY</button>
-                    </div>
-                </div>
-                <div id="box-rocket" class="bg-blue-50 p-4 rounded-2xl text-left border-l-8 border-blue-500 hidden">
-                    <p class="text-blue-600 font-black uppercase tracking-widest text-[9px] italic">Rocket Personal</p>
-                    <div class="flex justify-between items-center mt-1">
-                        <p class="text-base font-black text-gray-800 select-text" id="val-rocket"></p>
-                        <button onclick="copyNum('val-rocket')" class="bg-white text-blue-600 px-3 py-1 rounded-lg border border-blue-100 font-black text-[10px] shadow-sm">COPY</button>
-                    </div>
-                </div>
+            <div class="space-y-3 mb-6 text-sans text-xs">
+                <div id="box-nagad" class="bg-red-50 p-4 rounded-2xl text-left border-l-8 border-red-500 hidden font-bold"><p class="text-red-600 uppercase">Nagad</p><p class="text-gray-800 select-text text-base" id="val-nagad"></p></div>
+                <div id="box-bkash" class="bg-orange-50 p-4 rounded-2xl text-left border-l-8 border-orange-500 hidden font-bold"><p class="text-orange-600 uppercase">Bkash</p><p class="text-gray-800 select-text text-base" id="val-bkash"></p></div>
+                <div id="box-rocket" class="bg-blue-50 p-4 rounded-2xl text-left border-l-8 border-blue-500 hidden font-bold"><p class="text-blue-600 uppercase">Rocket</p><p class="text-gray-800 select-text text-base" id="val-rocket"></p></div>
             </div>
-
             <form id="money-form" onsubmit="handleMoneySubmit(event)">
                 <input type="number" id="money-amt" placeholder="৳ কত টাকা পাঠিয়েছেন?" class="w-full bg-gray-50 p-4 rounded-2xl border border-gray-100 outline-none font-bold select-text mb-3" required>
-                <input type="text" id="money-trx" placeholder="Transaction ID (TrxID)" class="w-full bg-gray-50 p-4 rounded-2xl border border-gray-100 outline-none font-bold select-text mb-4" required>
-                <button type="submit" class="w-full nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg uppercase italic font-sans">Submit Request</button>
+                <input type="text" id="money-trx" placeholder="আপনার TrxID দিন" class="w-full bg-gray-50 p-4 rounded-2xl border border-gray-100 outline-none font-bold select-text mb-4" required>
+                <button type="submit" class="w-full nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg uppercase italic font-sans">Confirm Request</button>
             </form>
             <button onclick="closeModal('modal-add-money')" class="mt-5 text-xs text-gray-400 font-bold uppercase underline">Cancel</button>
         </div>
     </div>
 
-    <!-- MODAL: JOIN (UID/Nickname Form) -->
+    <!-- MODAL: JOIN (Nickname/UID Form Fixed) -->
     <div id="modal-join" class="fixed inset-0 bg-black/60 z-[10000] hidden items-center justify-center p-6 backdrop-blur-sm">
         <div class="bg-white w-full max-w-sm rounded-[45px] p-8 shadow-2xl text-center">
-            <h3 class="text-xl font-bold text-red-600 mb-6 uppercase italic tracking-widest font-sans">Match Entry</h3>
+            <h3 class="text-xl font-bold text-red-600 mb-6 uppercase italic tracking-widest font-sans">Tournament Entry</h3>
             <div id="join-wallet" class="mb-4 bg-green-50 p-4 rounded-3xl border border-green-100">
-                <p class="text-[10px] font-bold text-green-600 uppercase">Available Wallet: ৳<span id="can-pay">0.00</span></p>
-                <button onclick="payByWallet()" class="mt-2 text-xs font-black text-red-600 underline uppercase italic">Use Wallet Balance</button>
+                <p class="text-[10px] font-bold text-green-600 uppercase">Your Wallet: ৳<span id="can-pay">0.00</span></p>
+                <button onclick="payByWallet()" class="mt-2 text-xs font-black text-red-600 underline uppercase italic font-sans">Use Wallet Balance</button>
             </div>
-            <p class="text-[10px] text-gray-300 uppercase mb-4 italic font-bold">--- OR MANUAL PAY ---</p>
-            <form id="join-form" onsubmit="handleJoinMatch(event)">
+            <form id="join-form" onsubmit="handleJoinTournament(event)">
                 <input type="hidden" id="join-match-id"><input type="hidden" id="join-match-fee"><input type="hidden" id="join-match-title">
-                <input type="text" id="join-pname" placeholder="Free Fire Nickname" class="w-full bg-gray-50 p-3 rounded-xl outline-none select-text border border-gray-100 font-bold mb-2" required>
+                <input type="text" id="join-pname" placeholder="Game Nickname" class="w-full bg-gray-50 p-3 rounded-xl outline-none select-text border border-gray-100 font-bold mb-2" required>
                 <input type="text" id="join-puid" placeholder="Player ID (UID)" class="w-full bg-gray-50 p-3 rounded-xl outline-none select-text border border-gray-100 font-bold mb-2" required>
                 <input type="text" id="join-ptrx" placeholder="Nagad/Bkash TrxID" class="w-full bg-gray-50 p-3 rounded-xl outline-none select-text border border-gray-100 font-bold mb-4" required>
-                <button type="submit" class="w-full nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg mt-2 uppercase italic tracking-widest">Confirm Entry</button>
+                <button type="submit" class="w-full nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg mt-2 uppercase tracking-widest italic">Confirm Join</button>
             </form>
             <button onclick="closeModal('modal-join')" class="mt-4 text-xs text-gray-400 font-bold uppercase underline">Cancel</button>
         </div>
@@ -198,15 +161,13 @@
             }, 2000);
         });
 
-        // ১. অ্যাডমিন সেটিংস (নম্বর ও ভাষা) - ফিক্সড সিঙ্ক
         function initEngine() {
             onSnapshot(doc(db, "app_settings", "config"), d => {
                 if(d.exists()) {
                     const c = d.data();
-                    if(c.nagad) { document.getElementById('val-nagad').innerText = c.nagad; document.getElementById('box-nagad').classList.remove('hidden'); } else { document.getElementById('box-nagad').classList.add('hidden'); }
-                    if(c.bkash) { document.getElementById('val-bkash').innerText = c.bkash; document.getElementById('box-bkash').classList.remove('hidden'); } else { document.getElementById('box-bkash').classList.add('hidden'); }
-                    if(c.rocket) { document.getElementById('val-rocket').innerText = c.rocket; document.getElementById('box-rocket').classList.remove('hidden'); } else { document.getElementById('box-rocket').classList.add('hidden'); }
-                    applyLang(c.language || "bn");
+                    if(c.nagad) { document.getElementById('val-nagad').innerText = c.nagad; document.getElementById('box-nagad').classList.remove('hidden'); }
+                    if(c.bkash) { document.getElementById('val-bkash').innerText = c.bkash; document.getElementById('box-bkash').classList.remove('hidden'); }
+                    if(c.rocket) { document.getElementById('val-rocket').innerText = c.rocket; document.getElementById('box-rocket').classList.remove('hidden'); }
                 }
             });
 
@@ -214,18 +175,17 @@
                 if(d.exists()) {
                     userData = d.data(); const b = parseFloat(userData.balance || 0).toFixed(2);
                     document.getElementById('balance-display').innerText = b; document.getElementById('can-pay').innerText = b;
-                    document.getElementById('user-name').innerText = userData.email.split('@')[0].toUpperCase();
+                    document.getElementById('user-name-display').innerText = userData.email.split('@')[0].toUpperCase();
                 }
             });
 
             syncMatches(); syncMyMatches(); syncBanners(); syncSupport();
             
+            // Notice Popup Sync (Fixed)
             onSnapshot(query(collection(db, "global_notifications"), orderBy("timestamp", "desc")), s => {
                 if(!s.empty) { const n = s.docs[0].data(); document.getElementById('notif-msg').innerText = n.msg; document.getElementById('notif-modal').style.display = 'block'; }
             });
         }
-
-        window.copyNum = (id) => { const text = document.getElementById(id).innerText; navigator.clipboard.writeText(text); alert("Copied: " + text); };
 
         window.openJoinForm = (id, title, fee) => {
             document.getElementById('join-match-id').value = id; document.getElementById('join-match-fee').value = fee;
@@ -247,45 +207,25 @@
                 snap.forEach(d => {
                     const m = d.data();
                     if(m.status !== 'completed') {
-                        list.innerHTML += `<div class="bg-white p-6 rounded-[40px] card-shadow border border-gray-50 overflow-hidden relative"><div class="flex justify-between mb-4"><span class="bg-red-50 text-red-600 text-[10px] px-3 py-1 rounded-full font-bold uppercase">${m.map} | ${m.type}</span><span class="text-[10px] font-black text-gray-300 italic">${m.releaseTime}</span></div><h3 class="text-xl font-bold text-gray-800 uppercase mb-5 italic tracking-tighter font-sans">${m.title}</h3><div class="grid grid-cols-3 gap-2 mb-6 text-center font-sans"><div class="bg-gray-50 p-3 rounded-3xl"><p class="text-[8px] text-gray-400 font-bold uppercase">Prize</p><p class="text-sm font-black text-green-600">৳${m.prize}</p></div><div class="bg-gray-50 p-3 rounded-3xl border-x border-white"><p class="text-[8px] text-gray-400 font-bold uppercase">Entry</p><p class="text-sm font-black text-red-600">৳${m.fee}</p></div><div class="bg-gray-50 p-3 rounded-3xl"><p class="text-[8px] text-gray-400 font-bold uppercase">Status</p><p class="text-sm font-black text-blue-600 uppercase font-sans">${m.status}</p></div></div><button onclick="openJoinForm('${d.id}', '${m.title}', ${m.fee})" class="w-full nagad-gradient text-white py-4 rounded-3xl font-bold shadow-lg uppercase text-xs tracking-widest italic font-sans">Join Tournament</button></div>`;
+                        list.innerHTML += `<div class="bg-white p-6 rounded-[40px] card-shadow border border-gray-50 overflow-hidden relative"><div class="flex justify-between mb-4"><span class="bg-red-50 text-red-600 text-[10px] px-3 py-1 rounded-full font-bold uppercase">${m.map} | ${m.type}</span><span class="text-[10px] font-black text-gray-300 italic">${m.releaseTime}</span></div><h3 class="text-xl font-bold text-gray-800 uppercase mb-5 italic tracking-tighter">${m.title}</h3><div class="grid grid-cols-3 gap-2 mb-6 text-center font-sans"><div class="bg-gray-50 p-3 rounded-3xl"><p class="text-[8px] text-gray-400 font-bold uppercase tracking-widest">Prize</p><p class="text-sm font-black text-green-600">৳${m.prize}</p></div><div class="bg-gray-50 p-3 rounded-3xl border-x border-white"><p class="text-[8px] text-gray-400 font-bold uppercase tracking-widest">Entry</p><p class="text-sm font-black text-red-600">৳${m.fee}</p></div><div class="bg-gray-50 p-3 rounded-3xl"><p class="text-[8px] text-gray-400 font-bold uppercase tracking-widest">Status</p><p class="text-sm font-black text-blue-600 uppercase font-sans">${m.status}</p></div></div><button onclick="openJoinForm('${d.id}', '${m.title}', ${m.fee})" class="w-full nagad-gradient text-white py-4 rounded-3xl font-bold shadow-lg uppercase text-xs tracking-widest italic font-sans">Join Tournament</button></div>`;
                     }
                 });
             });
         }
 
-        function syncMyMatches() {
-            onSnapshot(query(collection(db, "registrations"), where("uid", "==", currentUser.uid)), async snap => {
-                const list = document.getElementById('my-matches-list'); list.innerHTML = '';
-                for(let d of snap.docs) {
-                    const r = d.data(); const mSnap = await getDoc(doc(db, "matches", r.matchID));
-                    if(!mSnap.exists()) continue;
-                    const m = mSnap.data();
-                    let sb = `<div class="mt-3 bg-orange-50 text-orange-600 text-[10px] p-3 rounded-2xl font-bold text-center uppercase tracking-widest italic font-sans">Wait for Approval</div>`;
-                    if(r.status === 'approved') {
-                        if(m.status === 'live') sb = `<div class="mt-3 bg-green-50 p-4 rounded-[30px] border-2 border-dashed border-green-200 text-center font-mono font-bold text-sm select-text font-sans">ID: ${m.roomID} | PS: ${m.roomPass}</div>`;
-                        else sb = `<div class="mt-3 bg-blue-50 text-blue-600 text-[10px] p-3 rounded-2xl font-bold text-center uppercase italic font-black">Wait for Info</div>`;
-                    }
-                    list.innerHTML += `<div class="bg-white p-5 rounded-[40px] card-shadow border border-gray-50"><h4 class="font-bold text-gray-800 text-sm uppercase italic">${m.title}</h4><p class="text-[9px] text-gray-400 font-bold uppercase mt-1">Player: ${r.playerName}</p>${sb}</div>`;
-                }
-            });
-        }
-
-        function syncBanners() { onSnapshot(collection(db, "banners"), s => { const slider = document.getElementById('banner-slider'); slider.innerHTML = ''; if(s.empty) { slider.innerHTML = `<img src="https://via.placeholder.com/600x250/e61d2b/ffffff?text=Welcome" class="banner-slide">`; return; } s.forEach(d => slider.innerHTML += `<img src="${d.data().img}" class="banner-slide">`); let i=0; if(s.size > 1) setInterval(() => { i++; if(i >= s.size) i = 0; slider.style.transform = `translateX(-${i * 100}%)`; }, 4500); }); }
-        function syncSupport() { onSnapshot(query(collection(db, "support_messages"), where("uid", "==", currentUser.uid)), s => { const l = document.getElementById('support-history'); l.innerHTML = ''; s.forEach(d => { const m = d.data(); l.innerHTML += `<div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 mb-2"><p class="text-xs font-bold text-gray-800 font-sans">Me: ${m.message}</p>${m.adminReply ? `<p class="text-xs text-red-600 font-bold mt-2 italic font-sans">Admin: ${m.adminReply}</p>` : ''}</div>`; }); }); }
-
-        document.getElementById('join-form').onsubmit = async (e) => { e.preventDefault(); await addDoc(collection(db, "registrations"), { uid: currentUser.uid, matchID: document.getElementById('join-match-id').value, matchTitle: document.getElementById('join-match-title').value, playerName: document.getElementById('join-pname').value, gameID: document.getElementById('join-puid').value, trxID: document.getElementById('join-ptrx').value, fee: document.getElementById('join-match-fee').value, status: 'pending', timestamp: new Date().getTime() }); alert("Sent!"); closeModal('modal-join'); };
-        document.getElementById('money-form').onsubmit = async (e) => { e.preventDefault(); await addDoc(collection(db, "wallet_requests"), { uid: currentUser.uid, email: currentUser.email, amount: document.getElementById('money-amt').value, trxID: document.getElementById('money-trx').value, type: 'deposit', status: 'pending', timestamp: new Date().getTime() }); alert("Sent!"); closeModal('modal-add-money'); };
+        window.handleJoinTournament = async (e) => { e.preventDefault(); await addDoc(collection(db, "registrations"), { uid: currentUser.uid, matchID: document.getElementById('join-match-id').value, matchTitle: document.getElementById('join-match-title').value, playerName: document.getElementById('join-pname').value, gameID: document.getElementById('join-puid').value, trxID: document.getElementById('join-ptrx').value, fee: document.getElementById('join-match-fee').value, status: 'pending', timestamp: new Date().getTime() }); alert("Sent!"); closeModal('modal-join'); };
+        window.handleMoneySubmit = async (e) => { e.preventDefault(); await addDoc(collection(db, "wallet_requests"), { uid: currentUser.uid, email: currentUser.email, amount: document.getElementById('money-amt').value, trxID: document.getElementById('money-trx').value, type: 'deposit', status: 'pending', timestamp: new Date().getTime() }); alert("Success!"); closeModal('modal-add-money'); };
         window.sendSupportMsg = async () => { const m = document.getElementById('support-msg').value; if(m) { await addDoc(collection(db, "support_messages"), { uid: currentUser.uid, email: currentUser.email, message: m, adminReply: "", timestamp: new Date().getTime() }); document.getElementById('support-msg').value = ''; alert("Sent!"); } };
-        
-        window.handleAuth = async (e) => { e.preventDefault(); const em = document.getElementById('auth-email').value; const ps = document.getElementById('auth-pass').value; const isL = document.getElementById('auth-btn').innerText === 'Access Account'; try { if(isL) await signInWithEmailAndPassword(auth, em, ps); else { const res = await createUserWithEmailAndPassword(auth, em, ps); await setDoc(doc(db, "users", res.user.uid), { email: em, balance: 0, createdAt: new Date() }); } } catch (err) { alert(err.message); } };
-        window.toggleAuth = () => { const b = document.getElementById('auth-btn'); b.innerText = b.innerText === 'Access Account' ? 'Sign Up' : 'Access Account'; };
+        window.handleAuth = async (e) => { e.preventDefault(); const em = document.getElementById('auth-email').value; const ps = document.getElementById('auth-pass').value; const isL = document.getElementById('auth-btn').innerText === 'LOG IN'; try { if(isL) await signInWithEmailAndPassword(auth, em, ps); else { const res = await createUserWithEmailAndPassword(auth, em, ps); await setDoc(doc(db, "users", res.user.uid), { email: em, balance: 0, createdAt: new Date() }); } } catch (err) { alert(err.message); } };
+        window.toggleAuth = () => { const b = document.getElementById('auth-btn'); b.innerText = b.innerText === 'LOG IN' ? 'Sign Up' : 'LOG IN'; };
         window.switchPage = (id) => { document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active-tab')); document.getElementById('tab-'+id).classList.add('active-tab'); document.querySelectorAll('.nav-icon').forEach(n => n.classList.replace('text-red-600', 'text-gray-300')); document.getElementById('nav-'+id).classList.replace('text-gray-300', 'text-red-600'); };
         window.openModal = (id) => document.getElementById(id).style.display = 'flex';
         window.closeModal = (id) => document.getElementById(id).style.display = 'none';
         window.logoutUser = () => signOut(auth);
-
-        const langMap = { bn: { loading: "লোড হচ্ছে...", home: "HOME", match: "MATCH", seba: "SEBA" }, en: { loading: "Connecting...", home: "HOME", match: "MATCH", seba: "SEBA" } };
-        function applyLang(lang) { const d = langMap[lang] || langMap.bn; document.getElementById('loading-text').innerText = d.loading; }
+        
+        function syncMyMatches() { onSnapshot(query(collection(db, "registrations"), where("uid", "==", currentUser.uid)), async snap => { const list = document.getElementById('my-matches-list'); list.innerHTML = ''; for(let d of snap.docs) { const r = d.data(); const mSnap = await getDoc(doc(db, "matches", r.matchID)); if(!mSnap.exists()) continue; const m = mSnap.data(); let sb = `<div class="mt-3 bg-orange-50 text-orange-600 text-[10px] p-3 rounded-2xl font-bold text-center uppercase tracking-widest italic">Wait for Approval</div>`; if(r.status === 'approved') { if(m.status === 'live') sb = `<div class="mt-3 bg-green-50 p-4 rounded-[30px] border-2 border-dashed border-green-200 text-center font-mono font-bold text-sm select-text font-sans">ID: ${m.roomID} | PS: ${m.roomPass}</div>`; else sb = `<div class="mt-3 bg-blue-50 text-blue-600 text-[10px] p-3 rounded-2xl font-bold text-center uppercase italic font-black">Wait for Info</div>`; } list.innerHTML += `<div class="bg-white p-5 rounded-[40px] card-shadow border border-gray-50"><h4 class="font-bold text-gray-800 text-sm uppercase italic">${m.title}</h4><p class="text-[9px] text-gray-400 font-bold uppercase mt-1">Player: ${r.playerName}</p>${sb}</div>`; } }); }
+        function syncBanners() { onSnapshot(collection(db, "banners"), s => { const l = document.getElementById('banner-slider'); l.innerHTML = ''; if(s.empty) l.innerHTML = `<img src="https://via.placeholder.com/600x250/e61d2b/ffffff?text=BattleArena" class="banner-slide">`; s.forEach(d => l.innerHTML += `<img src="${d.data().img}" class="banner-slide">`); let i=0; if(s.size > 1) setInterval(() => { i++; if(i >= s.size) i = 0; l.style.transform = `translateX(-${i * 100}%)`; }, 4500); }); }
+        function syncSupport() { onSnapshot(query(collection(db, "support_messages"), where("uid", "==", currentUser.uid)), s => { const l = document.getElementById('support-history'); l.innerHTML = ''; s.forEach(d => { const m = d.data(); l.innerHTML += `<div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 mb-2"><p class="text-xs font-bold text-gray-800 font-sans">Me: ${m.message}</p>${m.adminReply ? `<p class="text-xs text-red-600 font-bold mt-2 italic font-sans">Admin: ${m.adminReply}</p>` : ''}</div>`; }); }); }
     </script>
 </body>
 </html>
