@@ -16,50 +16,54 @@
         .nagad-gradient { background: linear-gradient(135deg, #e61d2b 0%, #ff4d4d 100%); }
         .card-shadow { box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
         
+        /* নিখুঁত পাশাপাশি ৩টি আইকন গ্রিড */
         .menu-grid { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 25px 10px !important; padding: 10px; width: 100%; text-align: center; }
         .menu-item { display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.1s; }
-        .menu-icon-box { width: 55px; height: 55px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; background: #fff; border: 1px solid #f1f5f9; margin-bottom: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+        .menu-icon-box { width: 58px; height: 58px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; background: #fff; border: 1px solid #f1f5f9; margin-bottom: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
         .menu-item:active .menu-icon-box { transform: scale(0.9); background-color: #fee2e2; }
-        .menu-text { font-size: 11px; font-weight: 700; color: #4b5563; text-transform: uppercase; }
+        .menu-text { font-size: 11px; font-weight: 700; color: #4b5563; text-transform: uppercase; letter-spacing: 0.5px; }
 
+        /* Professional Loader */
         #loader { position: fixed; inset: 0; background: white; z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .ring { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid var(--nagad-red); border-radius: 50%; animation: spin 1s infinite linear; }
+        .loader-ring { width: 55px; height: 55px; border: 5px solid #f3f3f3; border-top: 5px solid var(--nagad-red); border-radius: 50%; animation: spin 1s infinite linear; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
         .tab-page { display: none; padding-bottom: 100px; }
         .active-tab { display: block !important; animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        iframe, .appsgeyser-side-menu, #side-bar, .appsgeyser-arrow { display: none !important; visibility: hidden !important; }
+        
+        /* AppsGeyser Sidebar/Arrow Remove */
+        iframe, .appsgeyser-side-menu, #side-bar, .appsgeyser-arrow { display: none !important; visibility: hidden !important; pointer-events: none !important; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-    <div id="loader"><div class="ring"></div><h1 class="mt-4 text-3xl font-black text-red-600 italic tracking-tighter uppercase">BattleArena</h1><p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Master Control</p></div>
+    <div id="loader"><div class="loader-ring"></div><h1 class="mt-4 text-3xl font-black text-red-600 italic tracking-tighter uppercase font-sans">BattleArena</h1><p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Master Owner Control</p></div>
 
-    <!-- Security PIN (yasin999) -->
+    <!-- PIN SECURITY (yasin999) -->
     <div id="pin-screen" class="hidden fixed inset-0 bg-white z-[90000] flex flex-col items-center justify-center p-8 text-center">
         <img src="https://cdn-icons-png.flaticon.com/512/3064/3064155.png" class="w-16 mb-6">
         <h2 class="text-xl font-bold text-gray-800 uppercase italic">OWNER VERIFICATION</h2>
         <input type="password" id="pin-input" maxlength="8" placeholder="••••••" class="w-full max-w-xs bg-gray-50 p-5 rounded-[30px] text-center text-3xl tracking-[15px] border-2 border-gray-100 focus:border-red-500 outline-none my-8 shadow-inner">
-        <button onclick="verifyPin()" class="w-full max-w-xs nagad-gradient text-white py-4 rounded-[25px] font-bold shadow-xl active:scale-95 transition tracking-widest">ACCESS PANEL</button>
+        <button onclick="verifyPin()" class="w-full max-w-xs nagad-gradient text-white py-4 rounded-[25px] font-bold shadow-xl active:scale-95 transition tracking-widest uppercase">Access Panel</button>
     </div>
 
-    <!-- MAIN APP AREA -->
+    <!-- MAIN DASHBOARD -->
     <div id="app-body" class="hidden min-h-screen">
-        <header class="nagad-gradient p-6 pb-28 text-white sticky top-0 z-1000 rounded-b-[50px] shadow-2xl">
+        <header class="nagad-gradient p-6 pb-28 text-white sticky top-0 z-[1000] rounded-b-[50px] shadow-2xl text-center">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-xl font-bold border border-white/30 shadow-inner">O</div>
-                    <div>
-                        <h2 class="font-bold text-lg leading-tight uppercase font-sans">OWNER</h2>
+                    <div class="text-left">
+                        <h2 class="font-bold text-xl leading-tight uppercase font-sans tracking-tighter">OWNER</h2>
                         <p class="text-[11px] opacity-90 uppercase font-black text-yellow-300 tracking-widest font-sans italic">YASIN</p>
                     </div>
                 </div>
-                <button onclick="exitAdmin()" class="bg-white/10 w-10 h-10 rounded-2xl flex items-center justify-center border border-white/10 active:bg-red-800"><i class="fas fa-power-off"></i></button>
+                <button onclick="exitAdmin()" class="bg-white/10 w-10 h-10 rounded-2xl flex items-center justify-center border border-white/10 active:bg-red-800 transition"><i class="fas fa-power-off"></i></button>
             </div>
             <div class="grid grid-cols-2 gap-4 mt-10">
-                <div class="bg-white/10 backdrop-blur-xl p-4 rounded-[30px] border border-white/10 text-center"><p class="text-[9px] uppercase font-bold opacity-70 mb-1" id="lbl-income">Income</p><h3 class="text-xl font-bold italic">৳ <span id="stat-money">0.00</span></h3></div>
-                <div class="bg-white/10 backdrop-blur-xl p-4 rounded-[30px] border border-white/10 text-center"><p class="text-[9px] uppercase font-bold opacity-70 mb-1" id="lbl-users">Users</p><h3 class="text-xl font-bold italic" id="stat-users">0</h3></div>
+                <div class="bg-white/10 backdrop-blur-xl p-4 rounded-[30px] border border-white/10"><p class="text-[9px] uppercase font-bold opacity-70 mb-1" id="lbl-income">Total Income</p><h3 class="text-xl font-bold italic font-sans">৳ <span id="stat-money">0.00</span></h3></div>
+                <div class="bg-white/10 backdrop-blur-xl p-4 rounded-[30px] border border-white/10"><p class="text-[9px] uppercase font-bold opacity-70 mb-1" id="lbl-users">Users</p><h3 class="text-xl font-bold italic font-sans" id="stat-users">0</h3></div>
             </div>
         </header>
 
@@ -79,39 +83,39 @@
 
             <!-- PAGES CONTENT -->
             <div id="tab-matches" class="tab-page">
-                <div class="flex justify-between items-center mb-6 px-2"><h3 class="font-bold text-gray-800 text-lg uppercase italic font-sans" id="h-tour-title">Tournament List</h3><button onclick="openModal('modal-add')" class="bg-red-600 text-white px-5 py-2.5 rounded-2xl text-xs font-bold shadow-lg">+ Create</button></div>
+                <div class="flex justify-between items-center mb-6 px-2"><h3 class="font-bold text-gray-800 text-lg uppercase italic font-sans">Tournament Control</h3><button onclick="openModal('modal-add')" class="bg-red-600 text-white px-5 py-2.5 rounded-2xl text-xs font-bold shadow-lg">+ Create</button></div>
                 <div id="match-list" class="space-y-4"></div>
             </div>
 
             <div id="tab-wallet" class="tab-page"><h3 class="font-bold text-gray-800 text-lg mb-4 uppercase italic">Wallet Requests</h3><div id="wallet-list" class="space-y-4"></div></div>
             <div id="tab-support" class="tab-page"><h3 class="font-bold text-gray-800 text-lg mb-4 uppercase italic">Support Messages</h3><div id="support-list" class="space-y-4"></div></div>
-            <div id="tab-verify" class="tab-page"><h3 class="font-bold text-gray-800 text-lg mb-4 uppercase italic">Entry Verify</h3><div id="verify-list" class="space-y-4"></div></div>
+            <div id="tab-verify" class="tab-page"><h3 class="font-bold text-gray-800 text-lg mb-4 uppercase italic">Match Entry Verify</h3><div id="verify-list" class="space-y-4"></div></div>
 
             <div id="tab-settings" class="tab-page">
                 <div class="bg-white p-7 rounded-[40px] card-shadow border border-gray-100 space-y-4">
-                    <h3 class="font-bold text-gray-800 uppercase text-center border-b pb-3 font-sans">Owner Master Config</h3>
-                    <input type="text" id="set-nagad" placeholder="Nagad No" class="w-full bg-gray-50 p-4 rounded-2xl border border-gray-100 font-bold select-text outline-none">
-                    <input type="text" id="set-bkash" placeholder="Bkash No" class="w-full bg-gray-50 p-4 rounded-2xl border border-gray-100 font-bold select-text outline-none">
-                    <input type="text" id="set-rocket" placeholder="Rocket No" class="w-full bg-gray-50 p-4 rounded-2xl border border-gray-100 font-bold select-text outline-none">
-                    <select id="set-lang" class="w-full bg-gray-50 p-4 rounded-2xl border border-gray-100 font-bold outline-none"><option value="bn">Bengali (বাংলা)</option><option value="en">English</option></select>
-                    <button onclick="saveAppSettings()" class="w-full nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg uppercase tracking-widest">Update Settings</button>
+                    <h3 class="font-bold text-gray-800 uppercase text-center border-b pb-3 font-sans">Owner Config</h3>
+                    <div><label class="text-[9px] font-black text-red-600 uppercase ml-2 italic">Nagad No</label><input type="text" id="set-nagad" class="w-full bg-gray-50 p-4 rounded-2xl border border-gray-100 font-bold select-text outline-none"></div>
+                    <div><label class="text-[9px] font-black text-orange-600 uppercase ml-2 italic">Bkash No</label><input type="text" id="set-bkash" class="w-full bg-gray-50 p-4 rounded-2xl border border-gray-100 font-bold select-text outline-none"></div>
+                    <div><label class="text-[9px] font-black text-blue-600 uppercase ml-2 italic">Rocket No</label><input type="text" id="set-rocket" class="w-full bg-gray-50 p-4 rounded-2xl border border-gray-100 font-bold select-text outline-none"></div>
+                    <div><label class="text-[9px] font-black text-gray-400 uppercase ml-2">App Language</label><select id="set-lang" class="w-full bg-gray-50 p-4 rounded-2xl border border-gray-100 font-bold outline-none font-sans"><option value="bn">Bengali (বাংলা)</option><option value="en">English</option></select></div>
+                    <button onclick="saveAppSettings()" class="w-full nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg uppercase font-sans tracking-widest mt-2">Update Settings</button>
                 </div>
             </div>
 
             <div id="tab-banner" class="tab-page">
                 <input type="file" id="file-input" accept="image/*" class="hidden" onchange="previewImg(event)">
                 <div onclick="document.getElementById('file-input').click()" id="upload-preview" class="bg-white w-full h-40 rounded-3xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center cursor-pointer mb-4 italic">Select Image From Gallery</div>
-                <button id="upload-btn" onclick="uploadBannerAction()" class="w-full nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg opacity-50" disabled>UPLOAD BANNER</button>
-                <div id="banner-list" class="flex gap-4 overflow-x-auto mt-8"></div>
+                <button id="upload-btn" onclick="uploadBannerAction()" class="w-full nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg opacity-50" disabled>UPLOAD NOW</button>
+                <div id="banner-list" class="flex gap-4 overflow-x-auto mt-10"></div>
             </div>
 
-            <div id="tab-notify" class="tab-page"><div class="bg-white p-6 rounded-[35px] card-shadow border border-gray-50"><textarea id="notif-text" rows="4" placeholder="Enter notification message..." class="w-full bg-gray-50 p-5 rounded-3xl outline-none border border-gray-100 text-sm mb-4"></textarea><button onclick="sendNotice()" class="w-full nagad-gradient text-white py-4 rounded-2xl font-bold shadow-xl uppercase">Send Now</button></div></div>
+            <div id="tab-notify" class="tab-page"><div class="bg-white p-6 rounded-[35px] card-shadow border border-gray-50"><textarea id="notif-text" rows="4" placeholder="Announcement message..." class="w-full bg-gray-50 p-5 rounded-3xl outline-none border border-gray-100 text-sm mb-4"></textarea><button onclick="sendNotice()" class="w-full nagad-gradient text-white py-4 rounded-2xl font-bold shadow-xl uppercase">Send Now</button></div></div>
         </main>
 
         <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex justify-around p-4 z-[2000] rounded-t-[40px] shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
-            <button onclick="switchPage('home')" id="nav-home" class="nav-btn text-red-600 flex flex-col items-center font-bold"><i class="fas fa-home text-xl"></i><span class="text-[9px]">HOME</span></button>
-            <button onclick="switchPage('settings')" id="nav-settings" class="nav-btn text-gray-300 flex flex-col items-center font-bold"><i class="fas fa-cog text-xl"></i><span class="text-[9px]">CONFIG</span></button>
-            <button onclick="switchPage('matches')" id="nav-matches" class="nav-btn text-gray-300 flex flex-col items-center font-bold"><i class="fas fa-trophy text-xl"></i><span class="text-[9px]">MATCH</span></button>
+            <button onclick="switchPage('home')" id="nav-home" class="nav-btn text-red-600 flex flex-col items-center font-bold font-sans"><i class="fas fa-home text-xl"></i><span class="text-[9px]">HOME</span></button>
+            <button onclick="switchPage('settings')" id="nav-settings" class="nav-btn text-gray-300 flex flex-col items-center font-bold font-sans"><i class="fas fa-cog text-xl"></i><span class="text-[9px]">CONFIG</span></button>
+            <button onclick="switchPage('matches')" id="nav-matches" class="nav-btn text-gray-300 flex flex-col items-center font-bold font-sans"><i class="fas fa-trophy text-xl"></i><span class="text-[9px]">MATCH</span></button>
         </nav>
     </div>
 
@@ -121,10 +125,10 @@
             <h3 class="text-xl font-bold mb-6 text-center text-red-600 uppercase italic">Match Setup</h3>
             <form id="match-form" class="space-y-4">
                 <input type="text" name="title" placeholder="Match Title" class="w-full bg-gray-50 p-4 rounded-2xl outline-none font-bold select-text" required>
-                <div class="grid grid-cols-2 gap-3"><input type="number" name="fee" placeholder="Fee ৳" class="bg-gray-50 p-4 rounded-2xl outline-none" required><input type="number" name="prize" placeholder="Prize ৳" class="bg-gray-50 p-4 rounded-2xl outline-none" required></div>
-                <div class="grid grid-cols-2 gap-3"><select name="map" class="bg-gray-50 p-4 rounded-2xl outline-none font-bold text-gray-500 border-none font-sans"><option value="Bermuda">Bermuda</option><option value="Purgatory">Purgatory</option></select><select name="type" class="bg-gray-50 p-4 rounded-2xl outline-none font-bold text-gray-500 border-none font-sans"><option value="Solo">Solo</option><option value="Squad">Squad</option></select></div>
-                <input type="text" name="releaseTime" placeholder="Release Time (9:30 PM)" class="w-full bg-gray-50 p-4 rounded-2xl outline-none select-text" required>
-                <div class="flex gap-3 pt-4"><button type="button" onclick="closeModal('modal-add')" class="flex-1 bg-gray-100 py-4 rounded-2xl font-bold text-gray-400">EXIT</button><button type="submit" class="flex-[2] nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg uppercase">Publish</button></div>
+                <div class="grid grid-cols-2 gap-3"><input type="number" name="fee" placeholder="Fee ৳" class="bg-gray-50 p-4 rounded-2xl outline-none font-sans" required><input type="number" name="prize" placeholder="Prize ৳" class="bg-gray-50 p-4 rounded-2xl outline-none font-sans" required></div>
+                <div class="grid grid-cols-2 gap-3 font-sans"><select name="map" class="bg-gray-50 p-4 rounded-2xl outline-none font-bold text-gray-500 border-none"><option value="Bermuda">Bermuda</option><option value="Purgatory">Purgatory</option></select><select name="type" class="bg-gray-50 p-4 rounded-2xl outline-none font-bold text-gray-500 border-none"><option value="Solo">Solo</option><option value="Squad">Squad</option></select></div>
+                <input type="text" name="releaseTime" placeholder="Release Time (9:30 PM)" class="w-full bg-gray-50 p-4 rounded-2xl outline-none select-text font-sans" required>
+                <div class="flex gap-3 pt-4"><button type="button" onclick="closeModal('modal-add')" class="flex-1 bg-gray-100 py-4 rounded-2xl font-bold text-gray-400 font-sans">BACK</button><button type="submit" class="flex-[2] nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg uppercase font-sans">Publish</button></div>
             </form>
         </div>
     </div>
@@ -148,24 +152,20 @@
         const OWNER_PIN = "yasin999";
         let banner64 = "";
 
-        window.verifyPin = () => { if(document.getElementById('pin-input').value === OWNER_PIN) { localStorage.setItem('ba_owner_stable_v17', 'true'); location.reload(); } else alert("Wrong PIN!"); };
-        window.exitAdmin = () => { localStorage.removeItem('ba_owner_stable_v17'); location.reload(); };
+        window.verifyPin = () => { if(document.getElementById('pin-input').value === OWNER_PIN) { localStorage.setItem('ba_auth_stable_v17', 'true'); location.reload(); } else alert("PIN Error!"); };
+        window.exitAdmin = () => { localStorage.removeItem('ba_auth_stable_v17'); location.reload(); };
 
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('loader').style.display = 'none';
-                if(localStorage.getItem('ba_owner_stable_v17') === 'true') { document.getElementById('app-body').classList.remove('hidden'); initEngine(); }
+                if(localStorage.getItem('ba_auth_stable_v17') === 'true') { document.getElementById('app-body').classList.remove('hidden'); initAdmin(); }
                 else document.getElementById('pin-screen').classList.remove('hidden');
             }, 1800);
         });
 
-        window.switchPage = (id) => {
-            document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active-tab'));
-            document.getElementById('tab-'+id).classList.add('active-tab');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('text-red-600'));
-            if(id === 'home') document.getElementById('nav-home').classList.replace('text-gray-300', 'text-red-600');
-            else if(document.getElementById('nav-'+id)) document.getElementById('nav-'+id).classList.replace('text-gray-300', 'text-red-600');
-        };
+        window.switchPage = (id) => { document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active-tab')); document.getElementById('tab-'+id).classList.add('active-tab'); document.querySelectorAll('.nav-btn').forEach(b => b.classList.replace('text-red-600', 'text-gray-300')); if(id === 'home') document.getElementById('nav-home').classList.replace('text-gray-300', 'text-red-600'); else if(document.getElementById('nav-'+id)) document.getElementById('nav-'+id).classList.replace('text-gray-300', 'text-red-600'); };
+        window.openModal = (id) => document.getElementById(id).style.display = 'flex';
+        window.closeModal = (id) => document.getElementById(id).style.display = 'none';
 
         const langData = {
             en: { income: "Income", users: "Users", m_match: "Match", m_wallet: "Wallet", m_support: "Support", m_banner: "Banners", m_notif: "Notice", m_verify: "Verify" },
@@ -179,7 +179,7 @@
             document.getElementById('m-text-banner').innerText = d.m_banner; document.getElementById('m-text-notif').innerText = d.m_notif; document.getElementById('m-text-verify').innerText = d.m_verify;
         }
 
-        function initEngine() {
+        function initAdmin() {
             onSnapshot(collection(db, "users"), s => document.getElementById('stat-users').innerText = s.size);
             onSnapshot(collection(db, "registrations"), s => {
                 let cash = 0; s.forEach(d => { if(d.data().status === 'approved') cash += Number(d.data().fee || 0); });
@@ -190,44 +190,43 @@
                     document.getElementById('set-nagad').value = d.data().nagad || "";
                     document.getElementById('set-bkash').value = d.data().bkash || "";
                     document.getElementById('set-rocket').value = d.data().rocket || "";
-                    applyLanguage(d.data().language || "bn");
+                    const lang = d.data().language || "bn";
+                    document.getElementById('set-lang').value = lang;
+                    applyLanguage(lang);
                 }
             });
-            syncAllData();
+            syncEverything();
         }
 
         window.saveAppSettings = async () => {
-            const nagad = document.getElementById('set-nagad').value;
-            const bkash = document.getElementById('set-bkash').value;
-            const rocket = document.getElementById('set-rocket').value;
-            const lang = document.getElementById('set-lang').value;
-            await setDoc(doc(db, "app_settings", "config"), { nagad, bkash, rocket, language: lang }, { merge: true });
-            alert("Settings Saved Successfully!");
+            const data = { nagad: document.getElementById('set-nagad').value, bkash: document.getElementById('set-bkash').value, rocket: document.getElementById('set-rocket').value, language: document.getElementById('set-lang').value };
+            await setDoc(doc(db, "app_settings", "config"), data, { merge: true });
+            alert("Settings Saved!");
         };
 
-        function syncAllData() {
-            // WALLET (Direct fetch)
+        function syncEverything() {
+            // WALLET
             onSnapshot(collection(db, "wallet_requests"), snap => {
                 const list = document.getElementById('wallet-list'); list.innerHTML = ''; let w = 0;
-                snap.forEach(d => { const r = d.data(); if(r.status === 'pending') { w++; list.innerHTML += `<div class="bg-white p-5 rounded-[30px] card-shadow border-l-[10px] border-blue-500 font-sans"><h4 class="font-bold text-gray-800 text-sm uppercase italic">${r.email}</h4><p class="text-sm font-black text-red-600 mt-1">৳${r.amount} | ${r.trxID || r.type}</p><div class="mt-4 flex gap-2"><button onclick="approveWallet('${d.id}', '${r.uid}', ${r.amount}, '${r.type}')" class="flex-1 nagad-gradient text-white py-2 rounded-xl font-bold text-[10px] uppercase">Approve</button><button onclick="delDoc('wallet_requests','${d.id}')" class="flex-1 bg-gray-100 text-gray-400 py-2 rounded-xl font-bold text-[10px] uppercase text-xs">Reject</button></div></div>`; } });
+                snap.forEach(d => { const r = d.data(); if(r.status === 'pending') { w++; list.innerHTML += `<div class="bg-white p-5 rounded-[30px] card-shadow border-l-[10px] border-blue-500 font-sans"><h4 class="font-bold text-gray-800 text-sm uppercase italic">${r.email}</h4><p class="text-sm font-black text-red-600 mt-1">৳${r.amount} | ${r.trxID || r.type}</p><div class="mt-4 flex gap-2"><button onclick="approveWallet('${d.id}', '${r.uid}', ${r.amount}, '${r.type}')" class="flex-1 nagad-gradient text-white py-2 rounded-xl font-bold text-[10px] uppercase shadow-md">Confirm</button><button onclick="delDoc('wallet_requests','${d.id}')" class="flex-1 bg-gray-100 text-gray-400 py-2 rounded-xl font-bold text-[10px] uppercase">Reject</button></div></div>`; } });
                 document.getElementById('wallet-badge').innerText = w; document.getElementById('wallet-badge').style.display = w > 0 ? 'block' : 'none';
             });
-            // SUPPORT (Direct fetch)
+            // SUPPORT
             onSnapshot(collection(db, "support_messages"), snap => {
                 const list = document.getElementById('support-list'); list.innerHTML = ''; let u = 0;
-                snap.forEach(d => { const m = d.data(); if(!m.adminReply) u++; list.innerHTML += `<div class="bg-white p-5 rounded-[30px] card-shadow border-l-[10px] ${m.adminReply ? 'border-gray-200' : 'border-green-500'}"><p class="text-[9px] font-bold text-gray-400 uppercase">${m.email}</p><p class="text-sm font-bold text-gray-800 mt-1 select-text">${m.message}</p>${m.adminReply ? `<p class="mt-2 text-xs text-blue-500 italic font-bold">Reply: ${m.adminReply}</p>` : `<button onclick="replyMsg('${d.id}')" class="mt-3 bg-green-500 text-white px-3 py-1 rounded-lg text-[10px] font-bold uppercase">Reply</button>`}</div>`; });
+                snap.forEach(d => { const m = d.data(); if(!m.adminReply) u++; list.innerHTML += `<div class="bg-white p-5 rounded-[30px] card-shadow border-l-[10px] ${m.adminReply ? 'border-gray-200' : 'border-green-500'}"><p class="text-[9px] font-bold text-gray-400 uppercase">${m.email}</p><p class="text-sm font-bold text-gray-800 mt-1 select-text">${m.message}</p>${m.adminReply ? `<p class="mt-2 text-xs text-blue-500 italic font-bold">Reply: ${m.adminReply}</p>` : `<button onclick="replyMsg('${d.id}')" class="mt-3 bg-green-500 text-white px-3 py-1 rounded-lg text-[10px] font-bold">REPLY</button>`}</div>`; });
                 document.getElementById('support-badge').innerText = u; document.getElementById('support-badge').style.display = u > 0 ? 'block' : 'none';
             });
-            // VERIFY (Direct fetch)
+            // VERIFY
             onSnapshot(collection(db, "registrations"), snap => {
                 const list = document.getElementById('verify-list'); list.innerHTML = ''; let v = 0;
-                snap.forEach(d => { const r = d.data(); if(r.status === 'pending' && r.trxID !== 'WALLET_PAY') { v++; list.innerHTML += `<div class="bg-white p-5 rounded-[35px] card-shadow border-l-[12px] border-orange-500"><h4 class="font-bold text-gray-800 text-sm uppercase">Player: ${r.playerName}</h4><p class="text-[10px] font-bold text-blue-600 mt-1 uppercase font-sans">UID: ${r.gameID} | Trx: ${r.trxID}</p><div class="mt-4 flex gap-2"><button onclick="updateDoc(doc(db,'registrations','${d.id}'),{status:'approved'})" class="flex-1 nagad-gradient text-white py-3 rounded-2xl font-bold text-[10px] uppercase shadow-md">Approve</button><button onclick="delDoc('registrations','${d.id}')" class="flex-1 bg-gray-50 text-gray-400 py-3 rounded-2xl font-bold text-[10px] uppercase text-xs">Reject</button></div></div>`; } });
+                snap.forEach(d => { const r = d.data(); if(r.status === 'pending' && r.trxID !== 'WALLET_PAY') { v++; list.innerHTML += `<div class="bg-white p-5 rounded-[35px] card-shadow border-l-[12px] border-orange-500"><h4 class="font-bold text-gray-800 text-sm uppercase">Player: ${r.playerName}</h4><p class="text-[10px] font-bold text-blue-600 mt-1 uppercase font-sans">UID: ${r.gameID} | Trx: ${r.trxID}</p><div class="mt-4 flex gap-2"><button onclick="updateDoc(doc(db,'registrations','${d.id}'),{status:'approved'})" class="flex-1 nagad-gradient text-white py-3 rounded-2xl font-bold text-[10px] uppercase shadow-md">Approve</button><button onclick="delDoc('registrations','${d.id}')" class="flex-1 bg-gray-50 text-gray-400 py-3 rounded-2xl font-bold text-[10px] uppercase"><i class="fas fa-trash"></i></button></div></div>`; } });
                 document.getElementById('verify-badge').innerText = v; document.getElementById('verify-badge').style.display = v > 0 ? 'block' : 'none';
             });
-            // MATCHES (Direct fetch)
+            // MATCHES
             onSnapshot(collection(db, "matches"), snap => {
                 const list = document.getElementById('match-list'); list.innerHTML = '';
-                snap.forEach(d => { const m = d.data(); list.innerHTML += `<div class="bg-white p-5 rounded-[35px] card-shadow border-l-[12px] border-red-600 flex justify-between items-center"><div class="flex-1"><h4 class="font-bold text-gray-800 text-sm uppercase italic">${m.title}</h4><p class="text-[9px] text-gray-400 font-bold uppercase mt-1 font-sans">${m.time}</p><div class="mt-3 flex gap-2"><button onclick="releaseRoom('${d.id}')" class="bg-red-50 text-red-600 text-[10px] px-3 py-1.5 rounded-xl font-bold border border-red-100 uppercase font-sans">Room ID</button><button onclick="delDoc('matches','${d.id}')" class="bg-gray-50 text-gray-400 text-[10px] px-3 py-1.5 rounded-xl font-bold uppercase text-xs">Delete</button></div></div><span class="bg-green-100 text-green-600 text-[9px] font-black px-4 py-1.5 rounded-full uppercase font-sans">${m.status}</span></div>`; });
+                snap.forEach(d => { const m = d.data(); list.innerHTML += `<div class="bg-white p-5 rounded-[35px] card-shadow border-l-[12px] border-red-600 flex justify-between items-center"><div class="flex-1"><h4 class="font-bold text-gray-800 text-sm uppercase italic">${m.title}</h4><p class="text-[9px] text-gray-400 font-bold uppercase mt-1 font-sans">${m.time}</p><div class="mt-3 flex gap-2"><button onclick="releaseRoom('${d.id}')" class="bg-red-50 text-red-600 text-[10px] px-3 py-1.5 rounded-xl font-bold border border-red-100 uppercase">Room ID</button><button onclick="delDoc('matches','${d.id}')" class="bg-gray-50 text-gray-400 text-[10px] px-3 py-1.5 rounded-xl font-bold uppercase text-xs"><i class="fas fa-trash-alt"></i></button></div></div><span class="bg-green-100 text-green-600 text-[9px] font-black px-4 py-1.5 rounded-full uppercase">${m.status}</span></div>`; });
             });
             // Banner
             onSnapshot(collection(db, "banners"), s => { const l = document.getElementById('banner-list'); l.innerHTML = ''; s.forEach(d => l.innerHTML += `<div class="relative flex-shrink-0"><img src="${d.data().img}" class="w-48 h-28 object-cover rounded-[30px] border-4 border-white shadow-lg"><button onclick="delDoc('banners','${d.id}')" class="absolute -top-1 -right-1 bg-red-600 text-white w-7 h-7 rounded-full text-xs shadow-lg">×</button></div>`); });
@@ -243,7 +242,7 @@
 
         window.replyMsg = async (id) => { const r = prompt("Reply:"); if(r) await updateDoc(doc(db, "support_messages", id), { adminReply: r }); };
         window.releaseRoom = async (id) => { const rid = prompt("Room ID:"); const rps = prompt("Pass:"); if(rid && rps) await updateDoc(doc(db, "matches", id), { roomID: rid, roomPass: rps, status: 'live' }); };
-        window.previewImg = (e) => { const f = e.target.files[0]; const r = new FileReader(); r.onload = () => { banner64 = r.result; document.getElementById('upload-preview').innerHTML = `<img src="${banner64}" class="w-full h-full object-cover">`; document.getElementById('upload-btn').disabled = false; document.getElementById('upload-btn').classList.remove('opacity-50'); }; r.readAsDataURL(f); };
+        window.previewImg = (e) => { const r = new FileReader(); r.onload = () => { banner64 = r.result; document.getElementById('upload-preview').innerHTML = `<img src="${banner64}" class="w-full h-full object-cover">`; document.getElementById('upload-btn').disabled = false; document.getElementById('upload-btn').classList.remove('opacity-50'); }; r.readAsDataURL(e.target.files[0]); };
         window.uploadBannerAction = async () => { await addDoc(collection(db, "banners"), { img: banner64, createdAt: new Date() }); alert("Banner Uploaded!"); location.reload(); };
         window.sendNotice = async () => { const m = document.getElementById('notif-text').value; if(m) { await addDoc(collection(db, "notifications"), { msg: m, createdAt: new Date().getTime() }); alert("Sent!"); document.getElementById('notif-text').value=''; } };
         window.openModal = (id) => document.getElementById(id).style.display = 'flex';
@@ -253,7 +252,7 @@
         document.getElementById('match-form').onsubmit = async (e) => {
             e.preventDefault(); const f = e.target;
             await addDoc(collection(db, "matches"), { title: f.title.value, fee: f.fee.value, prize: f.prize.value, map: f.map.value, type: f.type.value, releaseTime: f.releaseTime.value, status: 'open', roomID: '', roomPass: '', createdAt: new Date().getTime() });
-            alert("Match Created!"); closeModal('modal-add'); f.reset();
+            alert("Match Published!"); closeModal('modal-add'); f.reset();
         };
     </script>
 </body>
