@@ -39,13 +39,14 @@
 
     <div id="loader"><div class="ring"></div><h1 class="mt-4 text-3xl font-black text-red-600 italic tracking-tighter uppercase font-sans">BattleArena</h1><p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">MASTER SYSTEM v27.0</p></div>
 
-    <!-- Security PIN (yasin999) -->
     <div id="pin-screen" class="hidden fixed inset-0 bg-white z-[90000] flex flex-col items-center justify-center p-8 text-center">
-        <img src="https://cdn-icons-png.flaticon.com/512/3064/3064155.png" class="w-16 mb-6">
-        <h2 id="pin-label" class="text-xl font-bold text-gray-800 uppercase italic font-sans">Verification Required</h2>
-        <input type="password" id="pin-input" maxlength="8" placeholder="••••••" class="w-full max-w-xs bg-gray-50 p-5 rounded-[30px] text-center text-3xl tracking-[15px] border-2 border-gray-100 focus:border-red-500 outline-none my-8">
-        <button onclick="verifyPin()" id="btn-login" class="w-full max-w-xs nagad-gradient text-white py-4 rounded-[25px] font-bold shadow-xl active:scale-95 transition">ACCESS PANEL</button>
-    </div>
+    <img src="https://cdn-icons-png.flaticon.com/512/3064/3064155.png" class="w-16 mb-6">
+    <h2 class="text-xl font-bold text-gray-800 uppercase italic mb-4">Admin Login</h2>
+    <input type="email" id="admin-email" placeholder="Admin Email" class="w-full max-w-xs bg-gray-50 p-5 rounded-2xl border-none outline-none mb-3 font-bold shadow-sm">
+    <input type="password" id="admin-password" placeholder="Password" class="w-full max-w-xs bg-gray-50 p-5 rounded-2xl border-none outline-none mb-4 font-bold shadow-sm">
+    <button onclick="loginAdmin()" class="w-full max-w-xs nagad-gradient text-white py-4 rounded-2xl font-bold uppercase tracking-widest shadow-lg">Login</button>
+</div>
+
 
     <!-- MAIN APP AREA -->
     <div id="app-body" class="hidden min-h-screen">
@@ -134,33 +135,51 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, doc, updateDoc, deleteDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, doc, updateDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDUHOA9iEYJGpkuRWgjCg8L00sQpW-36sk",
-            authDomain: "yk-tournament-719d3.firebaseapp.com",
-            projectId: "yk-tournament-719d3",
-            storageBucket: "yk-tournament-719d3.firebasestorage.app",
-            messagingSenderId: "489185516491",
-            appId: "1:489185516491:web:a12f64894cb05e1467344e",
-            measurementId: "G-N3HSR1VPF8"
-        };
+const firebaseConfig = {
+    apiKey: "AIzaSyDUHOA9iEYJGpkuRWgjCg8L00sQpW-36sk",
+    authDomain: "yk-tournament-719d3.firebaseapp.com",
+    projectId: "yk-tournament-719d3",
+    storageBucket: "yk-tournament-719d3.firebasestorage.app",
+    messagingSenderId: "489185516491",
+    appId: "1:489185516491:web:a12f64894cb05e1467344e"
+};
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const MASTER_PIN = "yasin999";
-        let banner64 = "";
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
-        window.verifyPin = () => { if(document.getElementById('pin-input').value === MASTER_PIN) { localStorage.setItem('ba_v27_stable', 'true'); location.reload(); } else alert("Wrong PIN!"); };
-        window.exitAdmin = () => { localStorage.removeItem('ba_v27_stable'); location.reload(); };
+// বাটন ক্লিক করলে লগইন হওয়ার ফাংশন
+window.loginAdmin = () => {
+    const email = document.getElementById('admin-email').value;
+    const pass = document.getElementById('admin-password').value;
+    if(!email || !pass) return alert("ইমেইল এবং পাসওয়ার্ড দিন!");
+    
+    signInWithEmailAndPassword(auth, email, pass).catch(e => alert("ভুল ইমেইল বা পাসওয়ার্ড!"));
+};
 
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('loader').style.display = 'none';
-                if(localStorage.getItem('ba_v27_stable') === 'true') { document.getElementById('app-body').classList.remove('hidden'); initEngine(); }
-                else document.getElementById('pin-screen').classList.remove('hidden');
-            }, 1800);
-        });
+// লগআউট ফাংশন
+window.exitAdmin = () => signOut(auth).then(() => location.reload());
+
+// লগইন স্ট্যাটাস চেক করা (অটোমেটিক)
+onAuthStateChanged(auth, (user) => {
+    setTimeout(() => {
+        document.getElementById('loader').style.display = 'none';
+        const ADMIN_EMAIL = "yasinkhondoker333@gmail.com";
+        
+        if (user && user.email === ADMIN_EMAIL) {
+            document.getElementById('app-body').classList.remove('hidden');
+            document.getElementById('pin-screen').classList.add('hidden');
+        } else {
+            document.getElementById('app-body').classList.add('hidden');
+            document.getElementById('pin-screen').classList.remove('hidden');
+            if(user) signOut(auth);
+        }
+    }, 1800);
+});
+
 
         window.switchPage = (id) => {
             document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active-tab'));
