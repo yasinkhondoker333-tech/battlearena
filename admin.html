@@ -177,17 +177,14 @@ onAuthStateChanged(auth, (user) => {
             document.getElementById('pin-screen').classList.remove('hidden');
             if(user) signOut(auth);
         }
-    }, 1800);
+        }, 1800);
 });
+window.switchPage = (id) => {
+    document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+    window.scrollTo(0,0);
+};
 
-
-        window.switchPage = (id) => {
-            document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active-tab'));
-            document.getElementById('tab-'+id).classList.add('active-tab');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.replace('text-red-600', 'text-gray-300'));
-            if(id === 'home') document.getElementById('nav-home').classList.replace('text-gray-300', 'text-red-600');
-            else if(document.getElementById('nav-'+id)) document.getElementById('nav-'+id).classList.replace('text-gray-300', 'text-red-600');
-        };
 
         const langData = {
             en: { income: "Income", users: "Users", m_match: "Match", m_wallet: "Wallet", m_support: "Support", m_banner: "Banners", m_notif: "Notice", m_verify: "Verify", t_title: "Tournaments" },
