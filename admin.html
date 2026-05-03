@@ -152,13 +152,11 @@ const firebaseConfig = {
     measurementId: "G-N3HSR1VPF8"
 };
 
-// Firebase Initialize
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app); 
 let banner64 = "";
 
-// লগইন ফাংশন
 window.adminLogin = (email, password) => {
     signInWithEmailAndPassword(auth, email, password)
         .then(() => {
@@ -170,6 +168,7 @@ window.adminLogin = (email, password) => {
             alert("ভুল ইমেইল বা পাসওয়ার্ড! আবার চেষ্টা করুন।");
             console.error("Login Error:", error.message);
         });
+};
 
     signInWithEmailAndPassword(auth, email, password)
         .then(() => {
