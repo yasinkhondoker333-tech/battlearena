@@ -39,13 +39,16 @@
 
     <div id="loader"><div class="ring"></div><h1 class="mt-4 text-3xl font-black text-red-600 italic tracking-tighter uppercase font-sans">BattleArena</h1><p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">MASTER SYSTEM v27.0</p></div>
 
-    <!-- Security PIN (yasin999) -->
-    <div id="pin-screen" class="hidden fixed inset-0 bg-white z-[90000] flex flex-col items-center justify-center p-8 text-center">
-        <img src="https://cdn-icons-png.flaticon.com/512/3064/3064155.png" class="w-16 mb-6">
-        <h2 id="pin-label" class="text-xl font-bold text-gray-800 uppercase italic font-sans">Verification Required</h2>
-        <input type="password" id="pin-input" maxlength="8" placeholder="••••••" class="w-full max-w-xs bg-gray-50 p-5 rounded-[30px] text-center text-3xl tracking-[15px] border-2 border-gray-100 focus:border-red-500 outline-none my-8">
-        <button onclick="verifyPin()" id="btn-login" class="w-full max-w-xs nagad-gradient text-white py-4 rounded-[25px] font-bold shadow-xl active:scale-95 transition">ACCESS PANEL</button>
-    </div>
+    <input type="email" id="admin-email" placeholder="ইমেইল দিন" 
+    class="w-full max-w-xs bg-gray-50 p-5 rounded-2xl mb-4 border-none outline-none text-center shadow-inner">
+
+<input type="password" id="admin-password" placeholder="পাসওয়ার্ড দিন" 
+    class="w-full max-w-xs bg-gray-50 p-5 rounded-2xl mb-4 border-none outline-none text-center shadow-inner">
+
+<button onclick="adminLogin(document.getElementById('admin-email').value, document.getElementById('admin-password').value)" 
+    class="w-full max-w-xs nagad-gradient text-white py-4 rounded-2xl font-bold active:scale-95 transition-all shadow-lg">
+    Login
+</button>
 
     <!-- MAIN APP AREA -->
     <div id="app-body" class="hidden min-h-screen">
@@ -151,16 +154,33 @@
         const MASTER_PIN = "yasin999";
         let banner64 = "";
 
-        window.verifyPin = () => { if(document.getElementById('pin-input').value === MASTER_PIN) { localStorage.setItem('ba_v27_stable', 'true'); location.reload(); } else alert("Wrong PIN!"); };
-        window.exitAdmin = () => { localStorage.removeItem('ba_v27_stable'); location.reload(); };
-
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('loader').style.display = 'none';
-                if(localStorage.getItem('ba_v27_stable') === 'true') { document.getElementById('app-body').classList.remove('hidden'); initEngine(); }
-                else document.getElementById('pin-screen').classList.remove('hidden');
-            }, 1800);
+        // Firebase Auth ইমেইল ও পাসওয়ার্ড দিয়ে লগইন ফাংশন
+window.adminLogin = (email, password) => {
+    const auth = getAuth();
+    signInWithEmailAndPassword(auth, email, password)
+        .then(() => {
+            // লগইন সফল হলে পিন স্ক্রিন হাইড হবে এবং মেইন অ্যাপ দেখা যাবে
+            document.getElementById('pin-screen').classList.add('hidden');
+            document.getElementById('app-body').classList.remove('hidden');
+            localStorage.setItem('ba_v27_stable', 'true');
+        })
+        .catch((error) => {
+            alert("ভুল ইমেইল বা পাসওয়ার্ড! আবার চেষ্টা করুন।");
+            console.error(error);
         });
+};
+
+// পেজ লোড হওয়ার সময় আগের লগইন সেশন চেক করা
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        document.getElementById('loader').style.display = 'none';
+        if(localStorage.getItem('ba_v27_stable') === 'true'){
+            document.getElementById('pin-screen').classList.add('hidden');
+            document.getElementById('app-body').classList.remove('hidden');
+        }
+    }, 1000);
+});
+
 
         window.switchPage = (id) => {
             document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active-tab'));
