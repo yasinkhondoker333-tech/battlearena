@@ -170,7 +170,6 @@ window.adminLogin = (email, password) => {
             alert("ভুল ইমেইল বা পাসওয়ার্ড! আবার চেষ্টা করুন।");
             console.error("Login Error:", error.message);
         });
-};
 
     signInWithEmailAndPassword(auth, email, password)
         .then(() => {
