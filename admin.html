@@ -132,9 +132,10 @@
         </div>
     </div>
 
-    <script type="module">
+        <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, doc, updateDoc, deleteDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDUHOA9iEYJGpkuRWgjCg8L00sQpW-36sk",
@@ -146,50 +147,37 @@
             measurementId: "G-N3HSR1VPF8"
         };
 
-                const app = initializeApp(firebaseConfig);
+        const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app); 
         let banner64 = "";
 
-        // অটো লগইন চেক: একবার লগইন করলে আর বারবার পিন স্ক্রিন আসবে না
+        // অটো লগইন চেক: এটি রান হলে লোডার বন্ধ হবে
         onAuthStateChanged(auth, (user) => {
+            document.getElementById('loader').style.display = 'none'; 
             if (user) {
                 document.getElementById('pin-screen').classList.add('hidden');
                 document.getElementById('app-body').classList.remove('hidden');
-                initEngine(); // লগইন থাকলে ইঞ্জিন অটোমেটিক চালু হবে
+                initEngine(); 
             } else {
                 document.getElementById('pin-screen').classList.remove('hidden');
                 document.getElementById('app-body').classList.add('hidden');
             }
         });
 
-        // লগইন ফাংশন: পিন বক্সে পাসওয়ার্ড দিয়ে Access বাটনে চাপ দিলে কাজ করবে
+        // লগইন ফাংশন
         window.verifyPin = () => {
-            const adminEmail = "আপনার_ইমেইল@gmail.com"; // এখানে আপনার জিমেইল দিন
+            const adminEmail = "আপনার_ইমেইল@gmail.com"; // এখানে আপনার জিমেইলটি দিন
             const adminPass = document.getElementById('pin-input').value;
             
             if(!adminPass) { alert("পাসওয়ার্ড দিন!"); return; }
             
             signInWithEmailAndPassword(auth, adminEmail, adminPass)
-                .then(() => {
-                    console.log("Logged In Success");
-                })
-                .catch((error) => {
-                    alert("ভুল পাসওয়ার্ড! ফায়ারবেসে সেট করা পাসওয়ার্ডটি দিন।");
-                    console.error(error.message);
-                });
+                .then(() => { console.log("Login Success"); })
+                .catch((error) => { alert("ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।"); });
         };
 
-        // লগআউট সিস্টেম
-        window.exitAdmin = () => { 
-            auth.signOut().then(() => location.reload()); 
-        };
-
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('loader').style.display = 'none';
-            }, 1800);
-        });
+        window.exitAdmin = () => { auth.signOut().then(() => location.reload()); };
 
         window.switchPage = (id) => {
             document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active-tab'));
@@ -218,6 +206,7 @@
                 let cash = 0; s.forEach(d => { if(d.data().status === 'approved') cash += Number(d.data().fee || 0); });
                 document.getElementById('stat-money').innerText = cash.toFixed(2);
             });
+
             onSnapshot(doc(db, "app_settings", "config"), d => {
                 if(d.exists()) {
                     document.getElementById('set-nagad').value = d.data().nagad || "";
