@@ -132,10 +132,10 @@
         </div>
     </div>
 
-        <script type="module">
+            <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, doc, updateDoc, deleteDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDUHOA9iEYJGpkuRWgjCg8L00sQpW-36sk",
@@ -149,32 +149,50 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const auth = getAuth(app); 
-        let banner64 = "";
+        const auth = getAuth(app);
 
-        // অটো লগইন চেক: এটি রান হলে লোডার বন্ধ হবে
+        // এটি আপনার লগইন সেশন মনে রাখবে
+        setPersistence(auth, browserLocalPersistence);
+
         onAuthStateChanged(auth, (user) => {
-            document.getElementById('loader').style.display = 'none'; 
+            document.getElementById('loader').style.display = 'none';
             if (user) {
+                console.log("Logged in as:", user.email);
                 document.getElementById('pin-screen').classList.add('hidden');
                 document.getElementById('app-body').classList.remove('hidden');
-                initEngine(); 
+                initEngine();
             } else {
                 document.getElementById('pin-screen').classList.remove('hidden');
                 document.getElementById('app-body').classList.add('hidden');
             }
         });
 
-        // লগইন ফাংশন
         window.verifyPin = () => {
-            const adminEmail = "আপনার_ইমেইল@gmail.com"; // এখানে আপনার জিমেইলটি দিন
-            const adminPass = document.getElementById('pin-input').value;
+            const adminEmail = "yasinkhondoker333@gmail.com"; // আপনার ইমেইল
+            const adminPass = document.getElementById('pin-input').value.trim(); // .trim() বাড়তি স্পেস মুছে ফেলবে
             
             if(!adminPass) { alert("পাসওয়ার্ড দিন!"); return; }
             
+            // বাটন লোডিং দেখাবে
+            const btn = document.querySelector('#pin-screen button');
+            const originalText = btn.innerText;
+            btn.innerText = "Checking...";
+            btn.disabled = true;
+
             signInWithEmailAndPassword(auth, adminEmail, adminPass)
-                .then(() => { console.log("Login Success"); })
-                .catch((error) => { alert("ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।"); });
+                .then((userCredential) => {
+                    console.log("Success!");
+                })
+                .catch((error) => {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    console.error("Error Code:", error.code);
+                    if(error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password'){
+                        alert("ভুল পাসওয়ার্ড! ফায়ারবেসে যে পাসওয়ার্ড দিয়েছেন সেটি দিন।");
+                    } else {
+                        alert("সমস্যা: " + error.message);
+                    }
+                });
         };
 
         window.exitAdmin = () => { auth.signOut().then(() => location.reload()); };
@@ -187,38 +205,15 @@
             else if(document.getElementById('nav-'+id)) document.getElementById('nav-'+id).classList.replace('text-gray-300', 'text-red-600');
         };
 
-        const langData = {
-            en: { income: "Income", users: "Users", m_match: "Match", m_wallet: "Wallet", m_support: "Support", m_banner: "Banners", m_notif: "Notice", m_verify: "Verify", t_title: "Tournaments" },
-            bn: { income: "আয়", users: "ইউজার", m_match: "ম্যাচ", m_wallet: "ওয়ালেট", m_support: "সেবা", m_banner: "ব্যানার", m_notif: "নোটিশ", m_verify: "ভেরিফাই", t_title: "টুর্নামেন্ট লিস্ট" }
-        };
-
-        function applyLanguage(lang) {
-            const d = langData[lang] || langData.bn;
-            document.getElementById('label-stat-income').innerText = d.income; document.getElementById('label-stat-users').innerText = d.users;
-            document.getElementById('menu-match').innerText = d.m_match; document.getElementById('menu-wallet').innerText = d.m_wallet; document.getElementById('menu-support').innerText = d.m_support;
-            document.getElementById('menu-banner').innerText = d.m_banner; document.getElementById('menu-notif').innerText = d.m_notif; document.getElementById('menu-verify').innerText = d.m_verify;
-            document.getElementById('label-match-title').innerText = d.t_title;
-        }
-
         function initEngine() {
             onSnapshot(collection(db, "users"), s => document.getElementById('stat-users').innerText = s.size);
             onSnapshot(collection(db, "registrations"), s => {
                 let cash = 0; s.forEach(d => { if(d.data().status === 'approved') cash += Number(d.data().fee || 0); });
                 document.getElementById('stat-money').innerText = cash.toFixed(2);
             });
-
-            onSnapshot(doc(db, "app_settings", "config"), d => {
-                if(d.exists()) {
-                    document.getElementById('set-nagad').value = d.data().nagad || "";
-                    document.getElementById('set-bkash').value = d.data().bkash || "";
-                    document.getElementById('set-rocket').value = d.data().rocket || "";
-                    const lang = d.data().language || "bn";
-                    document.getElementById('set-lang').value = lang;
-                    applyLanguage(lang);
-                }
-            });
             syncAllData();
         }
+
 
         window.saveAppSettings = async () => {
             const data = { nagad: document.getElementById('set-nagad').value, bkash: document.getElementById('set-bkash').value, rocket: document.getElementById('set-rocket').value, language: document.getElementById('set-lang').value };
