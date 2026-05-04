@@ -37,21 +37,16 @@
 </head>
 <body oncontextmenu="return false;">
 
-    <div id="pin-screen" class="fixed inset-0 bg-white z-[90000] flex flex-col items-center justify-center p-8 text-center w-full h-full">
-    
-    <input type="email" id="admin-email" placeholder="আপনার ইমেইল দিন" 
-        class="w-full max-w-xs bg-gray-50 p-5 rounded-2xl mb-4 border-none outline-none text-center shadow-inner">
+    <div id="loader"><div class="ring"></div><h1 class="mt-4 text-3xl font-black text-red-600 italic tracking-tighter uppercase font-sans">BattleArena</h1><p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">MASTER SYSTEM v27.0</p></div>
 
-    <input type="password" id="admin-password" placeholder="পাসওয়ার্ড দিন" 
-        class="w-full max-w-xs bg-gray-50 p-5 rounded-2xl mb-4 border-none outline-none text-center shadow-inner">
-
-    <button onclick="adminLogin(document.getElementById('admin-email').value, document.getElementById('admin-password').value)" 
-        class="w-full max-w-xs nagad-gradient text-white py-4 rounded-2xl font-bold shadow-lg">
-        Login
-    </button>
-
+    <!-- Security PIN (yasin999) -->
+    <div id="pin-screen" class="hidden fixed inset-0 bg-white z-[90000] flex flex-col items-center justify-center p-8 text-center">
+        <img src="https://cdn-icons-png.flaticon.com/512/3064/3064155.png" class="w-16 mb-6">
+        <h2 id="pin-label" class="text-xl font-bold text-gray-800 uppercase italic font-sans">Verification Required</h2>
+        <input type="password" id="pin-input" maxlength="8" placeholder="••••••" class="w-full max-w-xs bg-gray-50 p-5 rounded-[30px] text-center text-3xl tracking-[15px] border-2 border-gray-100 focus:border-red-500 outline-none my-8">
+        <button onclick="verifyPin()" id="btn-login" class="w-full max-w-xs nagad-gradient text-white py-4 rounded-[25px] font-bold shadow-xl active:scale-95 transition">ACCESS PANEL</button>
     </div>
-    
+
     <!-- MAIN APP AREA -->
     <div id="app-body" class="hidden min-h-screen">
         <header class="nagad-gradient p-6 pb-28 text-white sticky top-0 z-1000 rounded-b-[50px] shadow-2xl">
@@ -138,10 +133,8 @@
     </div>
 
     <script type="module">
-                    <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, doc, updateDoc, deleteDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDUHOA9iEYJGpkuRWgjCg8L00sQpW-36sk",
@@ -155,75 +148,127 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const auth = getAuth(app);
+        const MASTER_PIN = "yasin999";
+        let banner64 = "";
 
-        // অটো লগইন সিস্টেম
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                document.getElementById('pin-screen').classList.add('hidden');
-                document.getElementById('app-body').classList.remove('hidden');
-            }
+        window.verifyPin = () => { if(document.getElementById('pin-input').value === MASTER_PIN) { localStorage.setItem('ba_v27_stable', 'true'); location.reload(); } else alert("Wrong PIN!"); };
+        window.exitAdmin = () => { localStorage.removeItem('ba_v27_stable'); location.reload(); };
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').style.display = 'none';
+                if(localStorage.getItem('ba_v27_stable') === 'true') { document.getElementById('app-body').classList.remove('hidden'); initEngine(); }
+                else document.getElementById('pin-screen').classList.remove('hidden');
+            }, 1800);
         });
 
-        // লগইন ফাংশন (যাতে বাটনে ক্লিক করলে কাজ করে)
-        window.adminLogin = (email, password) => {
-            if(!email || !password) {
-                alert("ইমেইল ও পাসওয়ার্ড দিন!");
-                return;
-            }
-            signInWithEmailAndPassword(auth, email, password)
-                .then(() => {
-                    document.getElementById('pin-screen').classList.add('hidden');
-                    document.getElementById('app-body').classList.remove('hidden');
-                })
-                .catch((error) => {
-                    alert("ভুল ইমেইল বা পাসওয়ার্ড! আবার চেষ্টা করুন।");
-                    console.error("Error:", error.message);
-                });
+        window.switchPage = (id) => {
+            document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active-tab'));
+            document.getElementById('tab-'+id).classList.add('active-tab');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.replace('text-red-600', 'text-gray-300'));
+            if(id === 'home') document.getElementById('nav-home').classList.replace('text-gray-300', 'text-red-600');
+            else if(document.getElementById('nav-'+id)) document.getElementById('nav-'+id).classList.replace('text-gray-300', 'text-red-600');
         };
 
-        // পেজ পরিবর্তন করার ফাংশন
-        window.switchPage = (pageId) => {
-            document.querySelectorAll('.tab-page').forEach(page => page.classList.remove('active-tab'));
-            document.getElementById('tab-' + pageId).classList.add('active-tab');
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.replace('text-red-600', 'text-gray-300'));
-            const activeNav = document.getElementById('nav-' + pageId);
-            if(activeNav) activeNav.classList.replace('text-gray-300', 'text-red-600');
+        const langData = {
+            en: { income: "Income", users: "Users", m_match: "Match", m_wallet: "Wallet", m_support: "Support", m_banner: "Banners", m_notif: "Notice", m_verify: "Verify", t_title: "Tournaments" },
+            bn: { income: "আয়", users: "ইউজার", m_match: "ম্যাচ", m_wallet: "ওয়ালেট", m_support: "সেবা", m_banner: "ব্যানার", m_notif: "নোটিশ", m_verify: "ভেরিফাই", t_title: "টুর্নামেন্ট লিস্ট" }
         };
 
-        // লগআউট
-        window.exitAdmin = () => {
-            auth.signOut().then(() => location.reload());
-        };
-
-        // ম্যাচ সেভ করার সিস্টেম
-        const matchForm = document.getElementById('match-form');
-        if(matchForm) {
-            matchForm.onsubmit = async (e) => {
-                e.preventDefault();
-                const formData = new FormData(matchForm);
-                try {
-                    await addDoc(collection(db, "matches"), {
-                        title: formData.get('title'),
-                        fee: formData.get('fee'),
-                        prize: formData.get('prize'),
-                        map: formData.get('map'),
-                        type: formData.get('type'),
-                        releaseTime: formData.get('releaseTime'),
-                        status: 'open',
-                        timestamp: Date.now()
-                    });
-                    alert("ম্যাচ সফলভাবে পাবলিশ হয়েছে!");
-                    document.getElementById('modal-add').style.display = 'none';
-                    matchForm.reset();
-                } catch (err) {
-                    alert("সেভ হয়নি!");
-                }
-            };
+        function applyLanguage(lang) {
+            const d = langData[lang] || langData.bn;
+            document.getElementById('label-stat-income').innerText = d.income; document.getElementById('label-stat-users').innerText = d.users;
+            document.getElementById('menu-match').innerText = d.m_match; document.getElementById('menu-wallet').innerText = d.m_wallet; document.getElementById('menu-support').innerText = d.m_support;
+            document.getElementById('menu-banner').innerText = d.m_banner; document.getElementById('menu-notif').innerText = d.m_notif; document.getElementById('menu-verify').innerText = d.m_verify;
+            document.getElementById('label-match-title').innerText = d.t_title;
         }
 
+        function initEngine() {
+            // Stats & Language Sync
+            onSnapshot(collection(db, "users"), s => document.getElementById('stat-users').innerText = s.size);
+            onSnapshot(collection(db, "registrations"), s => {
+                let cash = 0; s.forEach(d => { if(d.data().status === 'approved') cash += Number(d.data().fee || 0); });
+                document.getElementById('stat-money').innerText = cash.toFixed(2);
+            });
+            onSnapshot(doc(db, "app_settings", "config"), d => {
+                if(d.exists()) {
+                    document.getElementById('set-nagad').value = d.data().nagad || "";
+                    document.getElementById('set-bkash').value = d.data().bkash || "";
+                    document.getElementById('set-rocket').value = d.data().rocket || "";
+                    const lang = d.data().language || "bn";
+                    document.getElementById('set-lang').value = lang;
+                    applyLanguage(lang);
+                }
+            });
+            syncAllData();
+        }
+
+        window.saveAppSettings = async () => {
+            const data = { nagad: document.getElementById('set-nagad').value, bkash: document.getElementById('set-bkash').value, rocket: document.getElementById('set-rocket').value, language: document.getElementById('set-lang').value };
+            await setDoc(doc(db, "app_settings", "config"), data, { merge: true });
+            alert("Success! System Updated.");
+        };
+
+        function syncAllData() {
+            // Lists fetched directly without complex filters to avoid bugs
+            onSnapshot(collection(db, "wallet_requests"), snap => {
+                const list = document.getElementById('wallet-list'); list.innerHTML = ''; let w = 0;
+                snap.forEach(d => { const r = d.data(); if(r.status === 'pending') { w++; list.innerHTML += `<div class="bg-white p-5 rounded-[30px] card-shadow border-l-[10px] border-blue-500"><h4 class="font-bold text-gray-800 text-sm uppercase italic">${r.email}</h4><p class="text-sm font-black text-red-600 mt-1">৳${r.amount} | ${r.trxID || r.type}</p><div class="mt-4 flex gap-2"><button onclick="approveWallet('${d.id}', '${r.uid}', ${r.amount}, '${r.type}')" class="flex-1 nagad-gradient text-white py-2 rounded-xl font-bold text-[10px]">APPROVE</button><button onclick="delDoc('wallet_requests','${d.id}')" class="flex-1 bg-gray-100 text-gray-400 py-2 rounded-xl font-bold text-[10px]">REJECT</button></div></div>`; } });
+                document.getElementById('wallet-badge').innerText = w; document.getElementById('wallet-badge').style.display = w > 0 ? 'block' : 'none';
+            });
+                        onSnapshot(collection(db, "support_messages"), snap => {
+                const list = document.getElementById('support-list'); list.innerHTML = ''; let u = 0;
+                snap.forEach(d => { 
+                    const m = d.data(); 
+                    if(!m.adminReply) u++; 
+                    list.innerHTML += `<div class="bg-white p-5 rounded-[30px] card-shadow border-l-[10px] ${m.adminReply ? 'border-gray-200' : 'border-green-500'}">
+                        <p class="text-[9px] font-bold text-gray-400 uppercase">${m.email}</p>
+                        <p class="text-sm font-bold text-gray-800 mt-1">${m.message}</p>
+                        <div class="mt-3 flex gap-2">
+                            ${m.adminReply ? `<p class="text-xs text-blue-500 italic font-bold uppercase tracking-widest">Replied: ${m.adminReply}</p>` : `<button onclick="replyMsg('${d.id}')" class="bg-green-500 text-white px-3 py-1 rounded-lg text-[10px] font-bold">REPLY</button>`}
+                            <button onclick="delDoc('support_messages','${d.id}')" class="bg-red-600 text-white px-3 py-1 rounded-lg text-[10px] font-bold ml-2"><i class="fas fa-trash"></i> DELETE</button>
+                        </div>
+                    </div>`; 
+                });
+                document.getElementById('support-badge').innerText = u; document.getElementById('support-badge').style.display = u > 0 ? 'block' : 'none';
+            });
+
+            onSnapshot(collection(db, "registrations"), snap => {
+                const list = document.getElementById('verify-list'); list.innerHTML = ''; let v = 0;
+                snap.forEach(d => { const r = d.data(); if(r.status === 'pending' && r.trxID !== 'WALLET_PAY') { v++; list.innerHTML += `<div class="bg-white p-5 rounded-[35px] card-shadow border-l-[12px] border-orange-500"><h4 class="font-bold text-gray-800 text-sm uppercase italic">Player: ${r.playerName}</h4><p class="text-[10px] font-bold text-blue-600 mt-1 uppercase">UID: ${r.gameID} | Trx: ${r.trxID}</p><div class="mt-4 flex gap-2"><button onclick="updateDoc(doc(db,'registrations','${d.id}'),{status:'approved'})" class="flex-1 nagad-gradient text-white py-3 rounded-2xl font-bold text-[10px] uppercase shadow-md">Approve</button><button onclick="delDoc('registrations','${d.id}')" class="flex-1 bg-gray-50 text-gray-400 py-3 rounded-2xl font-bold text-[10px] uppercase"><i class="fas fa-trash"></i></button></div></div>`; } });
+                document.getElementById('verify-badge').innerText = v; document.getElementById('verify-badge').style.display = v > 0 ? 'block' : 'none';
+            });
+            onSnapshot(collection(db, "matches"), snap => {
+                const list = document.getElementById('match-list'); list.innerHTML = '';
+                snap.forEach(d => { const m = d.data(); list.innerHTML += `<div class="bg-white p-5 rounded-[35px] card-shadow border-l-[12px] border-red-600 flex justify-between items-center"><div class="flex-1"><h4 class="font-bold text-gray-800 text-sm uppercase italic">${m.title}</h4><div class="mt-3 flex gap-2"><button onclick="releaseRoom('${d.id}')" class="bg-red-50 text-red-600 text-[10px] px-3 py-1.5 rounded-xl font-bold border border-red-100 uppercase font-sans">Room ID</button><button onclick="delDoc('matches','${d.id}')" class="bg-gray-50 text-gray-400 text-[10px] px-3 py-1.5 rounded-xl font-bold"><i class="fas fa-trash"></i></button></div></div><span class="bg-green-100 text-green-600 text-[9px] font-black px-4 py-1.5 rounded-full uppercase italic">${m.status}</span></div>`; });
+            });
+            onSnapshot(collection(db, "banners"), s => { const l = document.getElementById('banner-list'); l.innerHTML = ''; s.forEach(d => l.innerHTML += `<div class="relative flex-shrink-0"><img src="${d.data().img}" class="w-48 h-28 object-cover rounded-[30px] border-4 border-white shadow-lg"><button onclick="delDoc('banners','${d.id}')" class="absolute -top-1 -right-1 bg-red-600 text-white w-7 h-7 rounded-full text-xs shadow-lg">×</button></div>`); });
+        }
+
+        window.approveWallet = async (id, uid, amount, type) => {
+            const uSnap = await getDoc(doc(db, "users", uid));
+            if(uSnap.exists()) {
+                let bal = Number(uSnap.data().balance) || 0; if(type === 'deposit') bal += Number(amount);
+                await updateDoc(doc(db, "users", uid), { balance: bal }); await updateDoc(doc(db, "wallet_requests", id), { status: 'approved' }); alert("Approved!");
+                await addDoc(collection(db, "notifications"), { uid: uid, msg: `৳${amount} যোগ হয়েছে!`, timestamp: new Date().getTime() });
+            }
+        };
+
+        window.saveAppSettings = async () => { await setDoc(doc(db, "app_settings", "config"), { nagad: document.getElementById('set-nagad').value, bkash: document.getElementById('set-bkash').value, rocket: document.getElementById('set-rocket').value, language: document.getElementById('set-lang').value }, { merge: true }); alert("Saved!"); };
+        window.replyMsg = async (id) => { const r = prompt("Reply:"); if(r) await updateDoc(doc(db, "support_messages", id), { adminReply: r }); };
+        window.releaseRoom = async (id) => { const rid = prompt("Room ID:"); const rps = prompt("Pass:"); if(rid && rps) await updateDoc(doc(db, "matches", id), { roomID: rid, roomPass: rps, status: 'live' }); };
+        window.previewImg = (e) => { const r = new FileReader(); r.onload = () => { banner64 = r.result; document.getElementById('upload-preview').innerHTML = `<img src="${banner64}" class="w-full h-full object-cover">`; document.getElementById('upload-btn').disabled = false; document.getElementById('upload-btn').classList.remove('opacity-50'); }; r.readAsDataURL(e.target.files[0]); };
+        window.uploadBannerNow = async () => { await addDoc(collection(db, "banners"), { img: banner64, createdAt: new Date() }); alert("Banner Uploaded!"); location.reload(); };
+        window.sendNotice = async () => { const m = document.getElementById('notif-text').value; if(m) { await addDoc(collection(db, "global_notifications"), { msg: m, timestamp: new Date().getTime() }); alert("Sent!"); document.getElementById('notif-text').value=''; } };
         window.openModal = (id) => document.getElementById(id).style.display = 'flex';
         window.closeModal = (id) => document.getElementById(id).style.display = 'none';
+        window.delDoc = async (col, id) => { if(confirm("Are you sure?")) await deleteDoc(doc(db, col, id)); };
+
+        document.getElementById('match-form').onsubmit = async (e) => {
+            e.preventDefault(); const f = e.target;
+            await addDoc(collection(db, "matches"), { title: f.title.value, fee: f.fee.value, prize: f.prize.value, map: f.map.value, type: f.type.value, releaseTime: f.releaseTime.value, status: 'open', roomID: '', roomPass: '', createdAt: new Date().getTime() });
+            alert("Match Created!"); closeModal('modal-add'); f.reset();
+        };
     </script>
 </body>
-</html>
+                                                 </html>
