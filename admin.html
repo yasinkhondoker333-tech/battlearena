@@ -221,33 +221,35 @@ ta();
             alert("Success! System Updated.");
         };
 
-                function syncAllData() {
+                        function syncAllData() {
+            // Support Messages Sync
             onSnapshot(collection(db, "support_messages"), snap => {
-                const list = document.getElementById('support-list'); list.innerHTML = ''; let u = 0;
-                snap.forEach(d => { 
-                    const m = d.data(); 
-                    if(!m.adminReply) u++; 
-                                        list.innerHTML += `<div class="bg-white p-5 rounded-[30px] card-shadow border-l-[10px] ${m.adminReply ? 'border-gray-200' : 'border-green-500'} mb-4">
-                        <p class="text-[9px] font-bold text-gray-400 uppercase">${m.email}</p>
-                        <p class="text-sm font-bold text-gray-800 mt-1">${m.message}</p>
-                        <div class="mt-3 flex gap-2">
-                            ${m.adminReply ? `<p class="text-xs text-blue-500 italic font-bold uppercase tracking-widest">Replied: ${m.adminReply}</p>` : `<button onclick="replyMsg('${d.id}')" class="bg-green-500 text-white px-3 py-1 rounded-lg text-[10px] font-bold">REPLY</button>`}
-                            <button onclick="delDoc('support_messages','${d.id}')" class="bg-red-600 text-white px-3 py-1 rounded-lg text-[10px] font-bold ml-2">DELETE</button>
-                        </div>
-                    </div>`; 
-                });
-                if(document.getElementById('support-badge')){
-                    document.getElementById('support-badge').innerText = u; 
-                    document.getElementById('support-badge').style.display = u > 0 ? 'block' : 'none';
+                const list = document.getElementById('support-list'); 
+                if(list) {
+                    list.innerHTML = ''; let u = 0;
+                    snap.forEach(d => { 
+                        const m = d.data(); if(!m.adminReply) u++;
+                        list.innerHTML += `<div class="bg-white p-5 rounded-[30px] card-shadow border-l-[10px] ${m.adminReply ? 'border-gray-200' : 'border-green-500'} mb-4">
+                            <p class="text-[9px] font-bold text-gray-400 uppercase">${m.email}</p>
+                            <p class="text-sm font-bold text-gray-800 mt-1">${m.message}</p>
+                            <div class="mt-3 flex gap-2">
+                                ${m.adminReply ? `<p class="text-xs text-blue-500 italic font-bold">Replied: ${m.adminReply}</p>` : `<button onclick="replyMsg('${d.id}')" class="bg-green-500 text-white px-3 py-1 rounded-lg text-[10px] font-bold">REPLY</button>`}
+                                <button onclick="delDoc('support_messages','${d.id}')" class="bg-red-600 text-white px-3 py-1 rounded-lg text-[10px] font-bold ml-2">DELETE</button>
+                            </div>
+                        </div>`; 
+                    });
+                    const badge = document.getElementById('support-badge');
+                    if(badge) { badge.innerText = u; badge.style.display = u > 0 ? 'block' : 'none'; }
                 }
             });
 
+            // Registrations Sync
             onSnapshot(collection(db, "registrations"), snap => {
-                const list = document.getElementById('verify-list'); list.innerHTML = ''; let v = 0;
-                snap.forEach(d => { 
-                    const r = d.data(); 
-                    if(r.status === 'pending' && r.trxID !== 'WALLET_PAY') { 
-                        v++; 
+                const list = document.getElementById('verify-list'); 
+                if(list) {
+                    list.innerHTML = ''; let v = 0;
+                    snap.forEach(d => { 
+                        const r = d.data(); if(r.status === 'pending') { v++; 
                         list.innerHTML += `<div class="bg-white p-5 rounded-[35px] card-shadow border-l-[12px] border-orange-500 mb-4 text-gray-800">
                             <h4 class="font-bold text-sm uppercase italic">Player: ${r.playerName}</h4>
                             <p class="text-[10px] font-bold text-blue-600 mt-1 uppercase">UID: ${r.gameID} | Trx: ${r.trxID}</p>
@@ -255,85 +257,70 @@ ta();
                                 <button onclick="updateDoc(doc(db,'registrations','${d.id}'),{status:'approved'})" class="flex-1 nagad-gradient text-white py-3 rounded-2xl font-bold text-[10px] uppercase shadow-md">Approve</button>
                                 <button onclick="delDoc('registrations','${d.id}')" class="flex-1 bg-gray-100 text-gray-400 py-3 rounded-2xl font-bold text-[10px] uppercase">Delete</button>
                             </div>
-                        </div>`; 
-                    } 
-                });
-                if(document.getElementById('verify-badge')){
-                    document.getElementById('verify-badge').innerText = v; 
-                    document.getElementById('verify-badge').style.display = v > 0 ? 'block' : 'none';
+                        </div>`; }
+                    });
+                    const vBadge = document.getElementById('verify-badge');
+                    if(vBadge) { vBadge.innerText = v; vBadge.style.display = v > 0 ? 'block' : 'none'; }
                 }
             });
 
-            onSnapshot(collection(db, "matches"), snap => {
-                const list = document.getElementById('match-list'); list.innerHTML = '';
-                snap.forEach(d => { 
-                    const m = d.data(); 
-                    list.innerHTML += `<div class="bg-white p-5 rounded-[35px] card-shadow border-l-[12px] border-red-600 flex justify-between items-center mb-4 text-gray-800">
-                        <div class="flex-1">
-                            <h4 class="font-bold text-sm uppercase italic">${m.title}</h4>
-                            <p class="text-[9px] font-bold text-gray-400 uppercase">${m.type} | ${m.map}</p>
-                            <div class="mt-3 flex gap-2">
-                                <button onclick="releaseRoom('${d.id}')" class="bg-red-50 text-red-600 text-[10px] px-3 py-1.5 rounded-xl font-bold border border-red-100 uppercase">Room ID</button>
-                                <button onclick="delDoc('matches','${d.id}')" class="bg-gray-100 text-gray-400 text-[10px] px-3 py-1.5 rounded-xl font-bold">Delete</button>
+            // Match Management Sync
+            onSnapshot(query(collection(db, "matches"), orderBy("createdAt", "desc")), snap => {
+                const list = document.getElementById('match-list'); 
+                if(list) {
+                    list.innerHTML = '';
+                    snap.forEach(d => { 
+                        const m = d.data(); 
+                        list.innerHTML += `<div class="bg-white p-5 rounded-[35px] card-shadow border-l-[12px] border-red-600 flex justify-between items-center mb-4 text-gray-800">
+                            <div class="flex-1">
+                                <h4 class="font-bold text-sm uppercase italic">${m.title}</h4>
+                                <p class="text-[9px] font-bold text-gray-400 uppercase">${m.type} | ${m.map}</p>
+                                <div class="mt-3 flex gap-2">
+                                    <button onclick="releaseRoom('${d.id}')" class="bg-red-50 text-red-600 text-[10px] px-3 py-1.5 rounded-xl font-bold border border-red-100 uppercase">Room ID</button>
+                                    <button onclick="delDoc('matches','${d.id}')" class="bg-gray-100 text-gray-400 text-[10px] px-3 py-1.5 rounded-xl font-bold">Delete</button>
+                                </div>
                             </div>
-                        </div>
-                        <span class="bg-green-100 text-green-600 text-[9px] font-black px-4 py-1.5 rounded-full uppercase italic">${m.status}</span>
-                    </div>`; 
-                });
+                            <span class="bg-green-100 text-green-600 text-[9px] font-black px-4 py-1.5 rounded-full uppercase italic">${m.status}</span>
+                        </div>`; 
+                    });
+                }
             });
 
+            // Banner Sync
             onSnapshot(collection(db, "banners"), s => { 
-                const l = document.getElementById('banner-list'); l.innerHTML = ''; 
-                s.forEach(d => l.innerHTML += `<div class="relative flex-shrink-0 m-2">
-                    <img src="${d.data().img}" class="w-48 h-28 object-cover rounded-[30px] border-4 border-white shadow-lg">
-                    <button onclick="delDoc('banners','${d.id}')" class="absolute -top-1 -right-1 bg-red-600 text-white w-7 h-7 rounded-full text-xs shadow-lg">×</button>
-                </div>`); 
+                const l = document.getElementById('banner-list'); 
+                if(l) {
+                    l.innerHTML = ''; 
+                    s.forEach(d => l.innerHTML += `<div class="relative flex-shrink-0 m-2">
+                        <img src="${d.data().img}" class="w-48 h-28 object-cover rounded-[30px] border-4 border-white shadow-lg">
+                        <button onclick="delDoc('banners','${d.id}')" class="absolute -top-1 -right-1 bg-red-600 text-white w-7 h-7 rounded-full text-xs shadow-lg">×</button>
+                    </div>`); 
+                }
             });
         }
 
-        window.saveAppSettings = async () => { 
-            await setDoc(doc(db, "app_settings", "config"), { 
-                nagad: document.getElementById('set-nagad').value, 
-                bkash: document.getElementById('set-bkash').value, 
-                rocket: document.getElementById('set-rocket').value, 
-                language: document.getElementById('set-lang').value 
-            }, { merge: true }); 
-            alert("Settings Saved!"); 
-        };
-
+        // Functions for Buttons
         window.replyMsg = async (id) => { const r = prompt("Reply:"); if(r) await updateDoc(doc(db, "support_messages", id), { adminReply: r }); };
-        
         window.releaseRoom = async (id) => { 
             const rid = prompt("Room ID:"); const rps = prompt("Pass:"); 
             if(rid && rps) await updateDoc(doc(db, "matches", id), { roomID: rid, roomPass: rps, status: 'live' }); 
         };
-
-        window.previewImg = (e) => { 
-            const r = new FileReader(); 
-            r.onload = () => { 
-                banner64 = r.result; 
-                document.getElementById('upload-preview').innerHTML = `<img src="${banner64}" class="w-full h-40 object-cover rounded-[30px]">`; 
-                document.getElementById('upload-btn').disabled = false; 
-                document.getElementById('upload-btn').classList.remove('opacity-50'); 
-            }; 
-            r.readAsDataURL(e.target.files[0]); 
-        };
-
-        window.uploadBannerNow = async () => { 
-            await addDoc(collection(db, "banners"), { img: banner64, createdAt: new Date() }); 
-            alert("Banner Uploaded!"); location.reload(); 
-        };
-
         window.delDoc = async (col, id) => { if(confirm("Are you sure?")) await deleteDoc(doc(db, col, id)); };
 
-        document.getElementById('match-form').onsubmit = async (e) => {
-            e.preventDefault(); const f = e.target;
-            await addDoc(collection(db, "matches"), { 
-                title: f.title.value, fee: f.fee.value, prize: f.prize.value, map: f.map.value, type: f.type.value, 
-                releaseTime: f.releaseTime.value, status: 'open', roomID: '', roomPass: '', createdAt: new Date().getTime() 
-            });
-            alert("Match Created!"); closeModal('modal-add'); f.reset();
-        };
+        // Match Create Form
+        const matchForm = document.getElementById('match-form');
+        if(matchForm) {
+            matchForm.onsubmit = async (e) => {
+                e.preventDefault(); const f = e.target;
+                try {
+                    await addDoc(collection(db, "matches"), { 
+                        title: f.title.value, fee: f.fee.value, prize: f.prize.value, map: f.map.value, type: f.type.value, 
+                        releaseTime: f.releaseTime.value, status: 'open', roomID: '', roomPass: '', createdAt: new Date().getTime() 
+                    });
+                    alert("Match Created!"); closeModal('modal-add'); f.reset();
+                } catch(err) { alert(err.message); }
+            };
+        }
 
         window.openModal = (id) => document.getElementById(id).style.display = 'flex';
         window.closeModal = (id) => document.getElementById(id).style.display = 'none';
